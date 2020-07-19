@@ -66,6 +66,9 @@ const localStorage = multer.diskStorage({
 
 const localUpload = multer({ storage: localStorage }).single("file");
 
+// @route   POST: /uploadfiles
+// @desc    Upload Videos
+// @access  Private
 router.post("/uploadfiles", auth, (req, res) => {
   let localFilePath = "";
   let localFileName = "";
@@ -90,6 +93,9 @@ router.post("/uploadfiles", auth, (req, res) => {
   });
 });
 
+// @route   POST :/thumbnail
+// @desc    Create Thumbnail
+// @access  Private
 router.post("/thumbnail", auth, (req, res) => {
   let thumbsFilePath = "";
   let fileDuration = "";
@@ -121,9 +127,13 @@ router.post("/thumbnail", auth, (req, res) => {
       filename: "thumbnail-%b.png",
     });
 });
+
+// @route   POST: /uploadVideo
+// @desc    Upload Info with video & thumbnail details
+// @access  Private
 router.post("/uploadVideo", auth, async (req, res) => {
   const {
-    write,
+    writer,
     title,
     description,
     privacy,
@@ -133,7 +143,7 @@ router.post("/uploadVideo", auth, async (req, res) => {
     thumbnail,
   } = req.body;
   const video = new Video({
-    write,
+    writer,
     title,
     description,
     privacy,
@@ -154,6 +164,58 @@ router.post("/uploadVideo", auth, async (req, res) => {
     });
   });
 });
+
+// @route   /GET
+// @desc    Get Video Info
+// @access  Public
+
+router.get("/", async (req, res) => {
+  const video = await Video.find().populate("writer", "handle");
+  if (!video.length) {
+    return res.json({ success: false, msg: "No Video Found" });
+  }
+  return res.status(200).json(video);
+});
+
+// @route   Delete /:videoname
+// @desc    Delete a Video with Video Info and thumbnail
+// @access  Private
+// TODO: Make route Private
+router.delete("/:videoname", (req, res) => {
+  const filename = req.params.videoname;
+  gfs.remove({ filename: filename, root: "uploads" }, (err, gridStore) => {
+    if (err) {
+      return res.status(404).json({ err: err });
+    }
+  });
+  Video.findOneAndRemove({ filePath: filename }, (err, file) => {
+    if (err) {
+      console.log(err);
+      return res.json(err);
+    }
+    if (!file) {
+      return res.json({ msg: "No FIles Found" });
+    }
+    fs.unlinkSync(file.thumbnail);
+    return res.json(file);
+  });
+});
+const getData = () => {
+  return new Promise((resolve, reject) => {
+    // fetch("localhost:5000/api/video/", (error, res, data) => {
+    //   if (error) reject(error);
+    //   else resolve(data);
+    // });
+    fetch("localhost:5000/api/video")
+      .then((res) => res.json())
+      .then((data) => resolve(data))
+      .catch((error) => reject(error));
+  });
+};
+router.get("/getdata", (req, res) => {
+  // console.log(getData());
+});
+
 // @route  GET /files
 // @desc   Database Files
 router.get("/files", (req, res) => {
@@ -166,7 +228,7 @@ router.get("/files", (req, res) => {
 });
 
 // @route  GET /video/:videoname
-// @desc   Display Video
+// @desc   Stream Video
 router.get("/video/:videoname", (req, res) => {
   gfs.files.findOne({ filename: req.params.videoname }, (err, file) => {
     if (!file || file.length === 0) {
@@ -174,7 +236,31 @@ router.get("/video/:videoname", (req, res) => {
         err: "No file Exists",
       });
     }
-    // // Check if Mp4
+    console.log(file);
+    // Check if Mp4
+    if (file.contentType === "video/mp4") {
+      // Read output to browser
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({
+        err: "Not A Video",
+      });
+    }
+  });
+});
+
+// @route  GET /data/:videoname
+// @desc   Get Video Data
+router.get("/data/:id", (req, res) => {
+  gfs.files.findOne({ _id: req.params.id }, (err, file) => {
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: "No file Exists",
+      });
+    }
+    console.log(file);
+    // Check if Mp4
     if (file.contentType === "video/mp4") {
       // Read output to browser
       const readstream = gfs.createReadStream(file.filename);
@@ -189,7 +275,7 @@ router.get("/video/:videoname", (req, res) => {
 
 // @route <DELETE> /files/:id
 // @desc  Delete File
-router.delete("/deletefiles", (req, res) => {
+router.delete("/del/all", (req, res) => {
   gfs.files.find().toArray((err, files) => {
     if (!files || files.length === 0) {
       return res.status(404).json({ err: "No Files Exists" });

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const VideoSchema = new mongoose.Schema(
   {
-    write: {
+    writer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
       required: true,

@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 import {
   Typography,
   Button,
@@ -8,14 +7,16 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
+import LandingPage from "../LandingPage/LandingPage";
+import { connect } from "react-redux";
 function Dashboard({ authenticated, loading }) {
   const useStyles = makeStyles((theme) => ({
     dashboard: {
-      width: "100%",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+      justifyItems: "center",
+      gridGap: "1em",
+      gridRowGap: "0px",
     },
     paper: {
       width: "80%",
@@ -80,7 +81,7 @@ function Dashboard({ authenticated, loading }) {
   } else {
     return (
       <div className={classes.dashboard}>
-        <Typography variant="h4">User Logged In</Typography>
+        <LandingPage />
       </div>
     );
   }

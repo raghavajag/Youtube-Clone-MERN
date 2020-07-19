@@ -66,7 +66,11 @@ function UploadVidePage({
       margin: "auto",
     },
     video: {
-      margin: "auto",
+      margin: mediaMatch ? null : "auto",
+      width: mediaMatch ? "50%" : null,
+    },
+    mainVideo: {
+      width: "100%",
     },
     mediaContainer: {
       display: "flex",
@@ -264,6 +268,7 @@ function UploadVidePage({
               <Typography variant="h5">Preview Video</Typography>
 
               <video
+                className={classes.mainVideo}
                 width="400"
                 controls
                 src={`http://localhost:5000/api/video/video/${videoName}`}

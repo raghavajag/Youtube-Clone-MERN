@@ -24,6 +24,7 @@ import { getUserData } from "./redux/actions/auth";
 import { logout } from "./redux/actions/auth";
 import Dashboard from "./components/dashboard/Dashboard";
 import UploadVidePage from "./components/uploadVidePage/UploadVidePage";
+import DetailVideoPage from "./components/LandingPage/DetailVideoPage";
 
 const token = localStorage.getItem("x-auth-token");
 if (token) {
@@ -53,6 +54,11 @@ function App() {
                 <AuthRoute exact path="/login" component={Login} />
                 <AuthRoute exact path="/register" component={Register} />
                 <Route exact path="/" component={Dashboard} />
+                <Route
+                  exact
+                  path="/video/:videoId"
+                  component={DetailVideoPage}
+                />
                 <PrivateRoute
                   exact
                   path="/video/upload"
