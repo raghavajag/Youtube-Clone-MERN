@@ -46,7 +46,7 @@ function Navbar({ authenticated, loading, logout }) {
         <MyButton onClick={logout} tip="Logout">
           <LogOutIcon />
         </MyButton>
-        <Link to="/video/upload">
+        <Link to="/upload">
           <MyButton tip="Upload">
             <Video />
           </MyButton>

@@ -69,7 +69,7 @@ function VideoCard({
           </div>
           <div>
             <Typography variant="caption" color="textSecondary">
-              Length: {parseFloat(duration).toFixed(1)} mins
+              Length: {parseFloat(duration).toFixed(1)} sec
             </Typography>
           </div>
           <span style={{ marginTop: "0.5em" }}>{catagory}</span>

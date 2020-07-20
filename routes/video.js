@@ -200,21 +200,6 @@ router.delete("/:videoname", (req, res) => {
     return res.json(file);
   });
 });
-const getData = () => {
-  return new Promise((resolve, reject) => {
-    // fetch("localhost:5000/api/video/", (error, res, data) => {
-    //   if (error) reject(error);
-    //   else resolve(data);
-    // });
-    fetch("localhost:5000/api/video")
-      .then((res) => res.json())
-      .then((data) => resolve(data))
-      .catch((error) => reject(error));
-  });
-};
-router.get("/getdata", (req, res) => {
-  // console.log(getData());
-});
 
 // @route  GET /files
 // @desc   Database Files
@@ -252,27 +237,26 @@ router.get("/video/:videoname", (req, res) => {
 
 // @route  GET /data/:videoname
 // @desc   Get Video Data
-router.get("/data/:id", (req, res) => {
-  gfs.files.findOne({ _id: req.params.id }, (err, file) => {
-    if (!file || file.length === 0) {
-      return res.status(404).json({
-        err: "No file Exists",
-      });
-    }
-    console.log(file);
-    // Check if Mp4
-    if (file.contentType === "video/mp4") {
-      // Read output to browser
-      const readstream = gfs.createReadStream(file.filename);
-      readstream.pipe(res);
-    } else {
-      res.status(404).json({
-        err: "Not A Video",
-      });
-    }
-  });
+router.post("/data", async (req, res) => {
+  const video = await Video.findOne({ _id: req.body.videoId }).populate(
+    "writer",
+    "handle"
+  );
+  if (!video) {
+    return res.status(400).json({ msg: "Video Not Found" });
+  }
+  return res.status(200).json(video);
 });
 
+router.post("/catagory", async (req, res) => {
+  const catagory = req.body.catagory;
+  const video = await Video.find({ catagory }).populate("writer", "handle");
+  console.log(video);
+  if (!video.length) {
+    return res.json({ success: false, msg: "No Videos Found" });
+  }
+  return res.status(200).json(video);
+});
 // @route <DELETE> /files/:id
 // @desc  Delete File
 router.delete("/del/all", (req, res) => {

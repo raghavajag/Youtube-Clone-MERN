@@ -53,17 +53,15 @@ function App() {
               <div className="main">
                 <AuthRoute exact path="/login" component={Login} />
                 <AuthRoute exact path="/register" component={Register} />
-                <Route exact path="/" component={Dashboard} />
                 <Route
                   exact
                   path="/video/:videoId"
                   component={DetailVideoPage}
                 />
-                <PrivateRoute
-                  exact
-                  path="/video/upload"
-                  component={UploadVidePage}
-                />
+                <PrivateRoute exact path="/upload" component={UploadVidePage} />
+                <div style={{ margin: "1em" }}>
+                  <Route exact path="/" component={Dashboard} />
+                </div>
               </div>
             </>
           </Switch>
