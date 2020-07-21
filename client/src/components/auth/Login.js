@@ -83,7 +83,7 @@ function Login({ loginUser, history, UI: { loading, errors } }) {
           <Button
             fullWidth
             type="submit"
-            color="primary"
+            color="secondary"
             className={classes.submit}
           >
             Log In{" "}
@@ -106,7 +106,7 @@ function Login({ loginUser, history, UI: { loading, errors } }) {
           <Grid item xs={12} sm={12} md={12}>
             <Button
               size="small"
-              color="primary"
+              color="secondary"
               className={classes.signUpLink}
               component={Link}
               to="/register"

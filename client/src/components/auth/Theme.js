@@ -1,3 +1,5 @@
+import { red } from "@material-ui/core/colors";
+
 export const registerTheme = (theme) => ({
   main: {
     width: "auto",
@@ -10,6 +12,28 @@ export const registerTheme = (theme) => ({
       width: 400,
       marginLeft: "auto",
       marginRight: "auto",
+    },
+    "& label.Mui-focused": {
+      color: red[500],
+    },
+    "& .MuiInput-underline:after": {
+      borderBottomColor: theme.palette.secondary.main,
+    },
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "lightgray",
+      },
+      "&:hover fieldset": {
+        borderColor: "lightgray",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: theme.palette.secondary.main,
+      },
+    },
+  },
+  input: {
+    ":focus": {
+      borderBottom: `2px solid ${theme.palette.secondary.main}`,
     },
   },
   paper: {
@@ -57,6 +81,23 @@ export const loginTheme = (theme) => ({
       width: 400,
       marginLeft: "auto",
       marginRight: "auto",
+    },
+    "& label.Mui-focused": {
+      color: red[500],
+    },
+    "& .MuiInput-underline:after": {
+      borderBottomColor: theme.palette.secondary.main,
+    },
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "lightgray",
+      },
+      "&:hover fieldset": {
+        borderColor: "lightgray",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: theme.palette.secondary.main,
+      },
     },
   },
   paper: {

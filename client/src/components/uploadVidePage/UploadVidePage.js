@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import AddIcon from "@material-ui/icons/Add";
 import { makeStyles } from "@material-ui/core/styles";
-import { lightBlue, lightGreen } from "@material-ui/core/colors";
+import { lightBlue, lightGreen, red } from "@material-ui/core/colors";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
@@ -32,6 +32,23 @@ function UploadVidePage({
       display: "flex",
       flexDirection: "column",
       padding: "1em",
+      "& label.Mui-focused": {
+        color: red[500],
+      },
+      "& .MuiInput-underline:after": {
+        borderBottomColor: theme.palette.secondary.main,
+      },
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+          borderColor: "lightgray",
+        },
+        "&:hover fieldset": {
+          borderColor: "lightgray",
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: theme.palette.secondary.main,
+        },
+      },
     },
     videoUpload: {
       display: "flex",
@@ -45,7 +62,7 @@ function UploadVidePage({
         backgroundColor: lightGreen[100],
       },
       "&:hover": {
-        backgroundColor: lightBlue[50],
+        backgroundColor: red[50],
         color: "#000",
         cursor: "pointer",
       },
@@ -54,7 +71,7 @@ function UploadVidePage({
       border: "none",
       padding: "0.5em",
       "&:focus": {
-        border: `1px solid ${theme.palette.primary.main}`,
+        border: `2px solid ${theme.palette.secondary.main}`,
         borderRadius: "8px",
         outlineWidth: "0",
       },
@@ -256,7 +273,7 @@ function UploadVidePage({
         </div>
         <Button
           className={classes.button}
-          color="primary"
+          color="secondary"
           type="submit"
           fullWidth
         >

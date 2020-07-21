@@ -19,11 +19,8 @@ function Dashboard({ authenticated, loading }) {
       gridRowGap: "0px",
     },
     paper: {
-      width: "80%",
-      height: "auto",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
+      minWidth: "300px",
+      height: "250px",
     },
     buttons: {
       display: "flex",
@@ -47,35 +44,14 @@ function Dashboard({ authenticated, loading }) {
           marginTop: "150px",
         }}
       >
-        <CircularProgress size={120} thickness={2} />
+        <CircularProgress color="secondary" size={120} thickness={2} />
       </div>
     );
   }
   if (!loading && !authenticated) {
     return (
       <div className={classes.dashboard}>
-        <Paper className={classes.paper}>
-          <Typography variant="h4">User Not Logged In</Typography>
-          <div className={classes.buttons}>
-            <Button
-              className={classes.login}
-              component={Link}
-              to="/login"
-              variant="contained"
-              color="secondary"
-            >
-              Log In
-            </Button>
-            <Button
-              className={classes.register}
-              component={Link}
-              to="/register"
-              color="primary"
-            >
-              Register
-            </Button>
-          </div>
-        </Paper>
+        <LandingPage />
       </div>
     );
   } else {

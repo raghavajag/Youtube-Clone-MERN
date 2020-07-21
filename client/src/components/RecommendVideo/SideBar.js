@@ -4,6 +4,7 @@ import SideBarCard from "./SideBarCard";
 function SideBar({ videos }) {
   return videos.map((video) => (
     <SideBarCard
+      key={video._id}
       title={video.title}
       user={video.writer.handle}
       catagory={video.catagory}

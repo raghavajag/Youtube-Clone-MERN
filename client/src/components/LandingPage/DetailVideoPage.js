@@ -17,7 +17,8 @@ import { deepOrange } from "@material-ui/core/colors";
 
 // Components
 import Description from "./Description";
-import SideBar from "../VideoSideBar/SideBar";
+import SideBar from "../RecommendVideo/SideBar";
+import Subscribe from "./Subscribe";
 function DetailVideoPage({ match }) {
   dayjs.extend(relativeTime);
   const [videoDetail, setVideoDetail] = useState(null);
@@ -30,11 +31,13 @@ function DetailVideoPage({ match }) {
     axios.post("/api/video/data", videoVariable).then((res) => {
       setVideoDetail(res.data);
       const catagory = res.data.catagory;
+      const id = res.data._id;
       const variable = {
         catagory,
       };
       axios.post("/api/video/catagory", variable).then((res) => {
-        setRecomVideo(res.data);
+        const videos = res.data.filter((video) => video._id !== id);
+        setRecomVideo(videos);
       });
     });
   }, []);
@@ -60,13 +63,12 @@ function DetailVideoPage({ match }) {
     recomVideo: {
       gridRow: matches ? "auto" : "1/4",
       gridColumn: matches ? "1/4" : null,
-      margin: matchMedia ? "2em" : "none",
+      marginTop: matchMedia && "2em",
       width: "100%",
     },
     comment: {
       gridColumn: matches ? "1/4" : "1/3",
       gridRow: matches ? "auto" : "2",
-      background: "green",
       margin: matchMedia ? "2em" : "none",
     },
     innerVideo: {
@@ -75,7 +77,10 @@ function DetailVideoPage({ match }) {
     },
     avatar: {
       color: theme.palette.getContrastText(deepOrange[500]),
-      backgroundColor: deepOrange[500],
+      backgroundColor: theme.palette.secondary.main,
+      "&:hover": {
+        cursor: "pointer",
+      },
     },
     subscribe: {
       background: "#F0F0F0",
@@ -90,7 +95,7 @@ function DetailVideoPage({ match }) {
       {videoDetail === null || recomVideo === null ? (
         <div className={classes.mainVideo}>
           <CircularProgress
-            style={{ margin: "auto", display: "inherit" }}
+            style={{ margin: "auto", display: "inherit", marginTop: "100px" }}
             size={120}
             thickness={2}
             color="secondary"
@@ -118,18 +123,22 @@ function DetailVideoPage({ match }) {
                 <Avatar className={classes.avatar}>
                   {videoDetail.writer.handle[0].toUpperCase()}
                 </Avatar>
-                <Button color="secondary">Subscribe</Button>
+                <Subscribe userTo={videoDetail.writer._id} />
               </div>
               <Description description={videoDetail.description} />
             </div>
           </div>
-          <div className={classes.recomVideo}>
-            <SideBar videos={recomVideo} />
-          </div>
+          {recomVideo && !recomVideo.length ? (
+            <Typography variant='h4'>No Similar Video Found</Typography>
+          ) : (
+            <div className={classes.recomVideo}>
+              <SideBar videos={recomVideo} />
+            </div>
+          )}
         </>
       )}
 
-      <div className={classes.comment}>COmments on Video</div>
+      <div className={classes.comment}></div>
     </div>
   );
 }

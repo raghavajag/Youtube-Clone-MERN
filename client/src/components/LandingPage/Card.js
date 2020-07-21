@@ -48,7 +48,8 @@ function VideoCard({
             <span>{title}</span>
             <hr />
             <Typography
-              style={{ textDecoration: "none", color: "rgba(0, 0, 255, 0.6)" }}
+              color="secondary"
+              style={{ textDecoration: "none" }}
               component={Link}
               to={`user/${writer}`}
             >

@@ -59,9 +59,11 @@ function Register({ history, registerUser, UI: { loading, errors } }) {
           <FormControl required fullWidth margin="normal">
             <InputLabel htmlFor="register-email-input">Enter Email</InputLabel>
             <Input
+            className={classes.input}
               id="register-email-input"
               onChange={(e) => onchange(e)}
               name="email"
+              aria-autocomplete='off'
               value={email}
               autoComplete="email"
               autoFocus
@@ -117,7 +119,7 @@ function Register({ history, registerUser, UI: { loading, errors } }) {
           <Button
             type="submit"
             fullWidth
-            color="primary"
+            color="secondary"
             className={classes.submit}
           >
             Register{" "}
@@ -141,7 +143,7 @@ function Register({ history, registerUser, UI: { loading, errors } }) {
           <Grid item xs={12} sm={12} md={12}>
             <Button
               size="small"
-              color="primary"
+              color="secondary"
               className={classes.signUpLink}
               component={Link}
               to="/login"

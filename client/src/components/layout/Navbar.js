@@ -13,6 +13,7 @@ import Notification from "@material-ui/icons/NotificationImportant";
 import HomeIcon from "@material-ui/icons/Home";
 import LogOutIcon from "@material-ui/icons/KeyboardReturn";
 import Video from "@material-ui/icons/VideoCall";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
 import MyButton from "../../utils/MyButton";
 import { logout } from "../../redux/actions/auth";
@@ -21,7 +22,8 @@ function Navbar({ authenticated, loading, logout }) {
   const useStyles = makeStyles((theme) => ({
     navColor: {
       height: "4em",
-      background: "linear-gradient(to right, #00B4DB, #0083B0)",
+      // background: "linear-gradient(to right, #00B4DB, #0083B0)",
+      background: theme.palette.secondary.main,
       color: "#fff",
     },
     darkNav: {
@@ -49,6 +51,11 @@ function Navbar({ authenticated, loading, logout }) {
         <Link to="/upload">
           <MyButton tip="Upload">
             <Video />
+          </MyButton>
+        </Link>
+        <Link to="/profile">
+          <MyButton tip="Profile">
+            <AccountCircleIcon />
           </MyButton>
         </Link>
       </Toolbar>

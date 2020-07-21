@@ -9,6 +9,8 @@ import {
 import { Link } from "react-router-dom";
 function SideBarCard({ title, user, catagory, thumbnail, id }) {
   const matches = useMediaQuery("(max-width:1300px)");
+  const matchMedia = useMediaQuery("(min-width:750px)");
+
   const useStyles = makeStyles((theme) => ({
     cardContent: {
       display: "flex",
@@ -20,6 +22,7 @@ function SideBarCard({ title, user, catagory, thumbnail, id }) {
       marginBottom: "2em",
       height: matches ? "200px" : "auto",
       justifyContent: matches ? "space-between" : "none",
+      margin: matches && matchMedia ? "2em" : "none",
     },
     media: {
       width: matches ? "auto" : "60%",
@@ -32,7 +35,8 @@ function SideBarCard({ title, user, catagory, thumbnail, id }) {
         <CardContent style={{ display: "flex", flexDirection: "column" }}>
           <span>{title}</span>
           <Typography
-            style={{ textDecoration: "none", color: "rgba(0, 0, 255, 0.6)" }}
+            style={{ textDecoration: "none" }}
+            color="secondary"
             component={Link}
             to={`user/${user}`}
           >
