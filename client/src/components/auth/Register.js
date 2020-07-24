@@ -59,11 +59,11 @@ function Register({ history, registerUser, UI: { loading, errors } }) {
           <FormControl required fullWidth margin="normal">
             <InputLabel htmlFor="register-email-input">Enter Email</InputLabel>
             <Input
-            className={classes.input}
+              className={classes.input}
               id="register-email-input"
               onChange={(e) => onchange(e)}
               name="email"
-              aria-autocomplete='off'
+              aria-autocomplete="off"
               value={email}
               autoComplete="email"
               autoFocus
@@ -106,7 +106,7 @@ function Register({ history, registerUser, UI: { loading, errors } }) {
             </Grid>
             <Grid item xs={12} md={12} sm={12}>
               <FormControl required fullWidth margin="normal">
-                <InputLabel htmlFor="user-handle">Handle</InputLabel>
+                <InputLabel htmlFor="user-handle">Channel Name</InputLabel>
                 <Input
                   onChange={(e) => onchange(e)}
                   name="handle"

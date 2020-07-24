@@ -4,7 +4,7 @@ import axios from "axios";
 
 import { connect } from "react-redux";
 import { useState } from "react";
-function Subscribe({ id, userTo }) {
+function Subscribe({ id, userTo, authenticated, loading, history }) {
   const [subNum, setSubNum] = useState(0);
   const [subscribed, setSubscribed] = useState(null);
   const onSubscribe = () => {
@@ -61,7 +61,12 @@ function Subscribe({ id, userTo }) {
   console.log(subscribed);
   return (
     <>
-      {subscribed !== null ? (
+      {!authenticated && !loading ? (
+        <Button color="secondary" onClick={() => history.push("/login")}>
+          {" "}
+          {subscribed ? "Subscribed" : "Subscribe"} {subNum}
+        </Button>
+      ) : subscribed !== null ? (
         <Button
           onClick={() => onSubscribe()}
           color={subscribed ? "default" : "secondary"}
@@ -75,5 +80,7 @@ function Subscribe({ id, userTo }) {
 }
 const mapStateToProps = (state) => ({
   id: state.user.credentials._id,
+  authenticated: state.user.authenticated,
+  loading: state.user.loading,
 });
 export default connect(mapStateToProps)(Subscribe);

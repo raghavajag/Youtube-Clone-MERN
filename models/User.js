@@ -18,5 +18,9 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  profileImage: {
+    type: String,
+    default: "http://localhost:5000/api/profile/image/noimage.png",
+  },
 });
 module.exports = User = mongoose.model("user", UserSchema);

@@ -14,7 +14,7 @@ import VideoCard from "./Card";
 import { useState } from "react";
 const useStyles = makeStyles({});
 
-function LandingPage() {
+function LandingPage({ history }) {
   const [videos, setVideo] = useState(null);
   useEffect(() => {
     axios.get("api/video").then((res) => {

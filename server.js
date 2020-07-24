@@ -2,7 +2,9 @@ const express = require("express");
 const app = express();
 const methodOverRide = require("method-override");
 const connectDB = require("./config/db");
+const cors = require("cors");
 
+app.use(cors());
 // Connect Database
 connectDB();
 // Init Middleware
@@ -14,7 +16,6 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/profile", require("./routes/profile"));
-app.use("/api/article", require("./routes/article"));
 app.use("/api/posts", require("./routes/posts"));
 app.use("/api/video", require("./routes/video"));
 app.use("/api/subscriber", require("./routes/subscriber"));

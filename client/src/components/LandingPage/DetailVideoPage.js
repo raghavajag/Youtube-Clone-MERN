@@ -19,7 +19,7 @@ import { deepOrange } from "@material-ui/core/colors";
 import Description from "./Description";
 import SideBar from "../RecommendVideo/SideBar";
 import Subscribe from "./Subscribe";
-function DetailVideoPage({ match }) {
+function DetailVideoPage({ match, history }) {
   dayjs.extend(relativeTime);
   const [videoDetail, setVideoDetail] = useState(null);
   const [recomVideo, setRecomVideo] = useState(null);
@@ -123,13 +123,13 @@ function DetailVideoPage({ match }) {
                 <Avatar className={classes.avatar}>
                   {videoDetail.writer.handle[0].toUpperCase()}
                 </Avatar>
-                <Subscribe userTo={videoDetail.writer._id} />
+                <Subscribe history={history} userTo={videoDetail.writer._id} />
               </div>
               <Description description={videoDetail.description} />
             </div>
           </div>
           {recomVideo && !recomVideo.length ? (
-            <Typography variant='h4'>No Similar Video Found</Typography>
+            <Typography variant="h4">No Similar Video Found</Typography>
           ) : (
             <div className={classes.recomVideo}>
               <SideBar videos={recomVideo} />
