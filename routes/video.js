@@ -152,7 +152,6 @@ router.post("/uploadVideo", auth, async (req, res) => {
     duration,
     thumbnail,
   });
-  console.log(video);
   await video.save((err, video) => {
     if (err) {
       console.log(err);
@@ -221,7 +220,6 @@ router.get("/video/:videoname", (req, res) => {
         err: "No file Exists",
       });
     }
-    console.log(file);
     // Check if Mp4
     if (file.contentType === "video/mp4") {
       // Read output to browser
@@ -251,7 +249,6 @@ router.post("/data", async (req, res) => {
 router.post("/catagory", async (req, res) => {
   const catagory = req.body.catagory;
   const video = await Video.find({ catagory }).populate("writer", "handle");
-  console.log(video);
   if (!video.length) {
     return res.json({ success: false, msg: "No Videos Found" });
   }

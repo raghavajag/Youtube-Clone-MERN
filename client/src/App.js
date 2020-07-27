@@ -26,7 +26,6 @@ import Dashboard from "./components/dashboard/Dashboard";
 import UploadVidePage from "./components/uploadVidePage/UploadVidePage";
 import DetailVideoPage from "./components/LandingPage/DetailVideoPage";
 import Profile from "./components/profile/Profile";
-
 const token = localStorage.getItem("x-auth-token");
 if (token) {
   const decodedToken = jwtDecode(token);

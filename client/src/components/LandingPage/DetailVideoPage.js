@@ -19,14 +19,17 @@ import { deepOrange } from "@material-ui/core/colors";
 import Description from "./Description";
 import SideBar from "../RecommendVideo/SideBar";
 import Subscribe from "./Subscribe";
-function DetailVideoPage({ match, history }) {
+import Comments from "./Comments";
+function DetailVideoPage({ match, history, profileImage }) {
   dayjs.extend(relativeTime);
   const [videoDetail, setVideoDetail] = useState(null);
+  const [commentList, setCommentList] = useState(null);
   const [recomVideo, setRecomVideo] = useState(null);
   const id = match.params.videoId;
   const videoVariable = {
     videoId: id,
   };
+
   useEffect(() => {
     axios.post("/api/video/data", videoVariable).then((res) => {
       setVideoDetail(res.data);
@@ -39,10 +42,20 @@ function DetailVideoPage({ match, history }) {
         const videos = res.data.filter((video) => video._id !== id);
         setRecomVideo(videos);
       });
+
+      axios.get(`/api/comment/${id}`).then((res) => {
+        if (res.data.success) {
+          setCommentList(res.data.comment);
+        } else {
+          alert("Failed To get the Comments");
+        }
+      });
     });
   }, []);
   console.log(videoDetail);
   console.log(recomVideo);
+  console.log(commentList);
+
   const matches = useMediaQuery("(max-width:1300px)");
   const matchMedia = useMediaQuery("(min-width:750px)");
 
@@ -89,10 +102,12 @@ function DetailVideoPage({ match, history }) {
     },
   }));
   const classes = useStyles();
-
+  const updateComment = (newComment) => {
+    setCommentList(commentList.concat(newComment));
+  };
   return (
     <div className={classes.wrapper}>
-      {videoDetail === null || recomVideo === null ? (
+      {videoDetail === null || recomVideo === null || commentList === null ? (
         <div className={classes.mainVideo}>
           <CircularProgress
             style={{ margin: "auto", display: "inherit", marginTop: "100px" }}
@@ -135,12 +150,18 @@ function DetailVideoPage({ match, history }) {
               <SideBar videos={recomVideo} />
             </div>
           )}
+          <div className={classes.comment}>
+            <Comments
+              history={history}
+              userImage={profileImage}
+              commentList={commentList}
+              id={id}
+              refreshFunction={updateComment}
+            />
+          </div>
         </>
       )}
-
-      <div className={classes.comment}></div>
     </div>
   );
 }
-
 export default DetailVideoPage;

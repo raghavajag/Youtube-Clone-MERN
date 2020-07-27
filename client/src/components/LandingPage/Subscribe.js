@@ -44,7 +44,6 @@ function Subscribe({ id, userTo, authenticated, loading, history }) {
       .then((res) => {
         if (res.data.success) {
           setSubNum(res.data.subscribeNumber);
-          console.log(res.data.subscribeNumber);
         } else {
           alert("Filed to get subscriber Number");
         }
@@ -52,13 +51,11 @@ function Subscribe({ id, userTo, authenticated, loading, history }) {
     axios.post("/api/subscriber/subscribed", subscribeNumber).then((res) => {
       if (res.data.success) {
         setSubscribed(res.data.subscribed);
-        console.log(res.data);
       } else {
         alert("Failed to get Subscribed Information");
       }
     });
-  }, []);
-  console.log(subscribed);
+  }, [id, userTo]);
   return (
     <>
       {!authenticated && !loading ? (
