@@ -65,7 +65,7 @@ function Comment({
         <div style={{ display: "flex", flexDirection: "row" }}>
           <div>
             <Avatar
-              src={`https://floating-springs-68584.herokuapp.com/${userImage}`}
+              src={`https://floating-springs-68584.herokuapp.com/api/profile/image/${userImage}`}
             />
           </div>
           <div>{author}</div>
