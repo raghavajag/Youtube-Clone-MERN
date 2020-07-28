@@ -23,7 +23,7 @@ function Comment({
   refreshFunction,
   isReply,
 }) {
-  console.log("Child SIngle Comment")
+  console.log("Child SIngle Comment");
   const userId = useSelector((state) => state.user.credentials._id);
   const [reply, setReply] = useState("");
   const [action, setAction] = useState(false);
@@ -65,7 +65,7 @@ function Comment({
         <div style={{ display: "flex", flexDirection: "row" }}>
           <div>
             <Avatar
-              src={`http://localhost:5000/api/profile/image/${userImage}`}
+              src={`https://floating-springs-68584.herokuapp.com/${userImage}`}
             />
           </div>
           <div>{author}</div>
