@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 import SingleComment from "./SingleComment";
+import Collapse from "@material-ui/core/Collapse";
 
 function ReplyComment({ commentList, id, refreshFunction, commentId }) {
   const [childCommentNum, setChildCommentNum] = useState(0);
   const [open, setOpen] = useState(false);
-  console.log(commentList);
   useEffect(() => {
     let commentNumber = 0;
     commentList.map((comment) => {
@@ -16,7 +16,7 @@ function ReplyComment({ commentList, id, refreshFunction, commentId }) {
     setChildCommentNum(commentNumber);
   }, [commentList, commentId]);
   const handleChange = () => {
-    setOpen(!open);
+    setOpen((prev) => !prev);
   };
   return (
     <div>
@@ -33,28 +33,27 @@ function ReplyComment({ commentList, id, refreshFunction, commentId }) {
           View {childCommentNum} more comments
         </p>
       )}
-      {open &&
-        commentList !== null &&
+      {commentList !== null &&
         commentList.map(
           (comment, index) =>
             comment.responseTo === commentId && (
-              <div
-                key={index}
-                style={{ marginLeft: "2em", marginTop: "2em", width: "80%" }}
-              >
-                {console.log(comment)}
-                <SingleComment
-                  comment={comment}
-                  id={id}
-                  refreshFunction={refreshFunction}
-                />
-                <ReplyComment
-                  commentId={comment._id}
-                  commentList={commentList}
-                  id={id}
-                  refreshFunction={refreshFunction}
-                />
-              </div>
+              <Collapse key={index} in={open}>
+                <div
+                  style={{ marginLeft: "2em", marginTop: "2em", width: "80%" }}
+                >
+                  <SingleComment
+                    comment={comment}
+                    id={id}
+                    refreshFunction={refreshFunction}
+                  />
+                  <ReplyComment
+                    commentId={comment._id}
+                    commentList={commentList}
+                    id={id}
+                    refreshFunction={refreshFunction}
+                  />
+                </div>
+              </Collapse>
             )
         )}
     </div>

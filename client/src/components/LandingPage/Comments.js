@@ -9,8 +9,14 @@ import axios from "axios";
 import SingleComment from "./SingleComment";
 import ReplyComment from "./ReplyComment";
 import { useSelector } from "react-redux";
-function Comments({ id, refreshFunction, commentList, history }) {
-  console.log(commentList);
+import { Typography } from "@material-ui/core";
+function Comments({
+  id,
+  refreshFunction,
+  commentList,
+  history,
+  commentLength,
+}) {
   const user = useSelector((state) => state.user.credentials._id);
   const userImage = useSelector((state) => state.user.credentials.profileImage);
   const authenticated = useSelector((state) => state.user.authenticated);
@@ -21,6 +27,9 @@ function Comments({ id, refreshFunction, commentList, history }) {
   const classes = useStyles();
   const onSubmit = (e) => {
     e.preventDefault();
+    if (comment.trim() === "") {
+      return alert("Must be something...");
+    }
     if (!authenticated) {
       return history.push("/login");
     }
@@ -42,10 +51,11 @@ function Comments({ id, refreshFunction, commentList, history }) {
   const onChange = (e) => {
     setComment(e.target.value);
   };
+
   return (
     <div>
       <br />
-      <p> replies </p>
+      <Typography component="h6">{commentLength} Comments</Typography>
       <form className={classes.form} onSubmit={(e) => onSubmit(e)}>
         <Avatar src={`http://localhost:5000/api/profile/image/${userImage}`} />
         <TextField
@@ -68,11 +78,10 @@ function Comments({ id, refreshFunction, commentList, history }) {
       </form>
       {commentList &&
         commentList.map((comment, index) => (
-          <div style={{ marginTop: "2em" }}>
+          <div key={index} style={{ marginTop: "2em" }}>
             {!comment.responseTo && (
               <>
                 <SingleComment
-                  key={index}
                   comment={comment}
                   id={id}
                   refreshFunction={refreshFunction}

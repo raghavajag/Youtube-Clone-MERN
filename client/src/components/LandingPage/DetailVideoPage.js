@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -11,9 +10,10 @@ import {
   Avatar,
   useMediaQuery,
   CircularProgress,
-  Button,
 } from "@material-ui/core";
 import { deepOrange } from "@material-ui/core/colors";
+import LikeDislike from "./LikeDislike";
+import { useSelector } from "react-redux";
 
 // Components
 import Description from "./Description";
@@ -21,8 +21,10 @@ import SideBar from "../RecommendVideo/SideBar";
 import Subscribe from "./Subscribe";
 import Comments from "./Comments";
 function DetailVideoPage({ match, history, profileImage }) {
+  const userId = useSelector((state) => state.user.credentials._id);
   dayjs.extend(relativeTime);
   const [videoDetail, setVideoDetail] = useState(null);
+  const [commentLength, setCommentLength] = useState(null);
   const [commentList, setCommentList] = useState(null);
   const [recomVideo, setRecomVideo] = useState(null);
   const id = match.params.videoId;
@@ -45,6 +47,7 @@ function DetailVideoPage({ match, history, profileImage }) {
 
       axios.get(`/api/comment/${id}`).then((res) => {
         if (res.data.success) {
+          setCommentLength(res.data.comment.length);
           setCommentList(res.data.comment);
         } else {
           alert("Failed To get the Comments");
@@ -52,9 +55,6 @@ function DetailVideoPage({ match, history, profileImage }) {
       });
     });
   }, []);
-  console.log(videoDetail);
-  console.log(recomVideo);
-  console.log(commentList);
 
   const matches = useMediaQuery("(max-width:1300px)");
   const matchMedia = useMediaQuery("(min-width:750px)");
@@ -96,7 +96,6 @@ function DetailVideoPage({ match, history, profileImage }) {
       },
     },
     subscribe: {
-      background: "#F0F0F0",
       display: "flex",
       justifyContent: "space-between",
     },
@@ -105,9 +104,15 @@ function DetailVideoPage({ match, history, profileImage }) {
   const updateComment = (newComment) => {
     setCommentList(commentList.concat(newComment));
   };
+  const like = () => {};
+  const dislike = () => {};
+
   return (
     <div className={classes.wrapper}>
-      {videoDetail === null || recomVideo === null || commentList === null ? (
+      {videoDetail === null ||
+      recomVideo === null ||
+      commentList === null ||
+      commentLength === null ? (
         <div className={classes.mainVideo}>
           <CircularProgress
             style={{ margin: "auto", display: "inherit", marginTop: "100px" }}
@@ -129,11 +134,11 @@ function DetailVideoPage({ match, history, profileImage }) {
               <hr />
             </div>
             <div display="flex">
-              {" "}
               <span> {videoDetail.views} views</span>
               <span style={{ marginLeft: "0.5em" }}>
                 ~{dayjs(videoDetail.createdAt).from(dayjs(), true)} ago
               </span>
+              <LikeDislike video videoId={id} userId={userId} />
               <div className={classes.subscribe}>
                 <Avatar className={classes.avatar}>
                   {videoDetail.writer.handle[0].toUpperCase()}
@@ -152,6 +157,7 @@ function DetailVideoPage({ match, history, profileImage }) {
           )}
           <div className={classes.comment}>
             <Comments
+              commentLength={commentLength}
               history={history}
               userImage={profileImage}
               commentList={commentList}

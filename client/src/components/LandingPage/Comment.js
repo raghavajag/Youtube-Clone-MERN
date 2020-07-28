@@ -10,7 +10,9 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import Box from "@material-ui/core/Box";
+import Collapse from "@material-ui/core/Collapse";
+
+import LikeDislike from "./LikeDislike";
 function Comment({
   content,
   author,
@@ -21,7 +23,6 @@ function Comment({
   refreshFunction,
   isReply,
 }) {
-  console.log(`Is Reply ${isReply}`);
   const userId = useSelector((state) => state.user.credentials._id);
   const [reply, setReply] = useState("");
   const [action, setAction] = useState(false);
@@ -32,6 +33,9 @@ function Comment({
   };
   const onSubmit = (e) => {
     e.preventDefault();
+    if (reply.trim() === "") {
+      return alert("Must be something");
+    }
     setReply("");
     const variable = {
       writer: userId,
@@ -41,7 +45,6 @@ function Comment({
     };
     axios.post("/api/comment", variable).then((res) => {
       if (res.data.success) {
-        console.log(res.data);
         setReply("");
         setAction(false);
         refreshFunction(res.data.doc);
@@ -54,8 +57,7 @@ function Comment({
     <Card
       style={{
         boxShadow: "none",
-        borderLeft: isReply && "4px solid #e0dede",
-        borderBottom: !isReply && "2px solid #888888",
+        borderLeft: !isReply ? "4px solid #e8505b" : "2px solid #888888",
       }}
     >
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -80,44 +82,47 @@ function Comment({
               {content}
             </Typography>
           </div>
-          <div>
-            <Button
-              onClick={() => setAction(!action)}
-              size="small"
-              color="primary"
-              style={{
-                height: "100%",
-              }}
-            >
-              Reply
-            </Button>
-          </div>
         </div>
-        {action && (
-          <form onSubmit={(e) => onSubmit(e)}>
-            <div
-              style={{
-                marginLeft: "2.5em",
-                marginTop: "1em",
-                display: "flex",
-              }}
-            >
-              <div style={{ width: "100%" }}>
-                <TextField
-                  value={reply}
-                  onChange={(e) => onChange(e)}
-                  fullWidth
-                  placeholder="Reply"
-                />
+        <div style={{ marginLeft: "2.5em" }}>
+          <LikeDislike comment commentId={commentId} userId={userId} />
+          <Button
+            onClick={() => setAction((prev) => !prev)}
+            size="small"
+            color="primary"
+            style={{
+              height: "100%",
+            }}
+          >
+            Reply
+          </Button>
+        </div>
+        {
+          <Collapse in={action}>
+            <form onSubmit={(e) => onSubmit(e)}>
+              <div
+                style={{
+                  marginLeft: "2.5em",
+                  marginTop: "1em",
+                  display: "flex",
+                }}
+              >
+                <div style={{ width: "100%" }}>
+                  <TextField
+                    value={reply}
+                    onChange={(e) => onChange(e)}
+                    fullWidth
+                    placeholder="Reply"
+                  />
+                </div>
+                <div>
+                  <Button variant="contained" size="small" type="submit">
+                    Submit
+                  </Button>
+                </div>
               </div>
-              <div>
-                <Button variant="contained" size="small" type="submit">
-                  Submit
-                </Button>
-              </div>
-            </div>
-          </form>
-        )}
+            </form>
+          </Collapse>
+        }
       </div>
     </Card>
   );
