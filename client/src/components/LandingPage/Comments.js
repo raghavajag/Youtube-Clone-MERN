@@ -4,22 +4,25 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import Avatar from "@material-ui/core/Avatar";
+import Typography from "@material-ui/core/Typography";
 
 import axios from "axios";
+
+// Components
 import SingleComment from "./SingleComment";
 import ReplyComment from "./ReplyComment";
-import { useSelector } from "react-redux";
-import { Typography } from "@material-ui/core";
+
 function Comments({
   id,
   refreshFunction,
   commentList,
   history,
   commentLength,
+  user,
+  userImage,
+  authenticated,
 }) {
-  const user = useSelector((state) => state.user.credentials._id);
-  const userImage = useSelector((state) => state.user.credentials.profileImage);
-  const authenticated = useSelector((state) => state.user.authenticated);
+  console.log('Comments')
   const [comment, setComment] = useState("");
   const useStyles = makeStyles(() => ({
     form: { display: "flex", flexDirection: "row" },
@@ -99,5 +102,4 @@ function Comments({
     </div>
   );
 }
-
-export default Comments;
+export default React.memo(Comments);

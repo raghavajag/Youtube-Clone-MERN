@@ -2,6 +2,7 @@ import React from "react";
 import SideBarCard from "./SideBarCard";
 
 function SideBar({ videos }) {
+  console.log('Recom videos')
   return videos.map((video) => (
     <SideBarCard
       key={video._id}
@@ -14,4 +15,4 @@ function SideBar({ videos }) {
   ));
 }
 
-export default SideBar;
+export default React.memo(SideBar);

@@ -236,10 +236,10 @@ router.get("/video/:videoname", (req, res) => {
 // @route  GET /data/:videoname
 // @desc   Get Video Data
 router.post("/data", async (req, res) => {
-  const video = await Video.findOne({ _id: req.body.videoId }).populate(
-    "writer",
-    "handle"
-  );
+  const video = await Video.findOneAndUpdate(
+    { _id: req.body.videoId },
+    { $inc: { views: 1 } }
+  ).populate("writer", "handle");
   if (!video) {
     return res.status(400).json({ msg: "Video Not Found" });
   }

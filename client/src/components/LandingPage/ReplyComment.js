@@ -60,4 +60,4 @@ function ReplyComment({ commentList, id, refreshFunction, commentId }) {
   );
 }
 
-export default ReplyComment;
+export default React.memo(ReplyComment);

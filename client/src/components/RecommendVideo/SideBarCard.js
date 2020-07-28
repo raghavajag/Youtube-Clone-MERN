@@ -23,6 +23,7 @@ function SideBarCard({ title, user, catagory, thumbnail, id }) {
       height: matches ? "200px" : "auto",
       justifyContent: matches ? "space-between" : "none",
       margin: matches && matchMedia ? "2em" : "none",
+      boxShadow: "none",
     },
     media: {
       width: matches ? "auto" : "60%",
@@ -58,4 +59,4 @@ function SideBarCard({ title, user, catagory, thumbnail, id }) {
   );
 }
 
-export default SideBarCard;
+export default React.memo(SideBarCard);

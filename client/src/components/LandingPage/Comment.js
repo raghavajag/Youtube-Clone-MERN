@@ -23,6 +23,7 @@ function Comment({
   refreshFunction,
   isReply,
 }) {
+  console.log("Child SIngle Comment")
   const userId = useSelector((state) => state.user.credentials._id);
   const [reply, setReply] = useState("");
   const [action, setAction] = useState(false);
@@ -128,4 +129,4 @@ function Comment({
   );
 }
 
-export default Comment;
+export default React.memo(Comment);

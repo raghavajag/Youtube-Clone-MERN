@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 import { Button } from "@material-ui/core";
 import axios from "axios";
 
-import { connect } from "react-redux";
 import { useState } from "react";
 function Subscribe({ id, userTo, authenticated, loading, history }) {
+  console.log(`Subscribe Page`)
   const [subNum, setSubNum] = useState(0);
   const [subscribed, setSubscribed] = useState(null);
   const onSubscribe = () => {
@@ -75,9 +75,5 @@ function Subscribe({ id, userTo, authenticated, loading, history }) {
     </>
   );
 }
-const mapStateToProps = (state) => ({
-  id: state.user.credentials._id,
-  authenticated: state.user.authenticated,
-  loading: state.user.loading,
-});
-export default connect(mapStateToProps)(Subscribe);
+
+export default React.memo(Subscribe);

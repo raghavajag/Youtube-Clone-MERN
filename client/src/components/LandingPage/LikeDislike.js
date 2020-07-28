@@ -46,6 +46,9 @@ function LikeDislike(props) {
   }, [props.userId]);
 
   const onLike = () => {
+    if (!props.authenticated) {
+      return props.history.push("/login");
+    }
     if (LikeAction === null) {
       axios.post("/api/like/upLike", variable).then((response) => {
         if (response.data.success) {
@@ -72,6 +75,9 @@ function LikeDislike(props) {
     }
   };
   const onDislike = () => {
+    if (!props.authenticated) {
+      return props.history.push("/login");
+    }
     if (DislikeAction !== null) {
       axios.post("/api/like/unDisLike", variable).then((response) => {
         if (response.data.success) {

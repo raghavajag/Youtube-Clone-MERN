@@ -5,23 +5,24 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  Avatar,
-  useMediaQuery,
-  CircularProgress,
-} from "@material-ui/core";
-import { deepOrange } from "@material-ui/core/colors";
+import { Avatar, useMediaQuery, CircularProgress } from "@material-ui/core";
 import LikeDislike from "./LikeDislike";
-import { useSelector } from "react-redux";
+import { connect } from "react-redux";
 
 // Components
 import Description from "./Description";
 import SideBar from "../RecommendVideo/SideBar";
 import Subscribe from "./Subscribe";
 import Comments from "./Comments";
-function DetailVideoPage({ match, history, profileImage }) {
-  const userId = useSelector((state) => state.user.credentials._id);
+function DetailVideoPage({
+  match,
+  history,
+  user: {
+    credentials: { _id: userId, profileImage: userImage },
+    loading,
+    authenticated,
+  },
+}) {
   dayjs.extend(relativeTime);
   const [videoDetail, setVideoDetail] = useState(null);
   const [commentLength, setCommentLength] = useState(null);
@@ -55,11 +56,10 @@ function DetailVideoPage({ match, history, profileImage }) {
       });
     });
   }, []);
-
   const matches = useMediaQuery("(max-width:1300px)");
   const matchMedia = useMediaQuery("(min-width:750px)");
 
-  const useStyles = makeStyles((theme) => ({
+  const useStyles = makeStyles(() => ({
     wrapper: {
       display: "grid",
       gridTemplateColumns: "1fr 2fr 1fr",
@@ -88,13 +88,6 @@ function DetailVideoPage({ match, history, profileImage }) {
       width: "100%",
       maxHeight: matches ? "auto" : "400px",
     },
-    avatar: {
-      color: theme.palette.getContrastText(deepOrange[500]),
-      backgroundColor: theme.palette.secondary.main,
-      "&:hover": {
-        cursor: "pointer",
-      },
-    },
     subscribe: {
       display: "flex",
       justifyContent: "space-between",
@@ -102,10 +95,9 @@ function DetailVideoPage({ match, history, profileImage }) {
   }));
   const classes = useStyles();
   const updateComment = (newComment) => {
+    console.log("Update Comment Function");
     setCommentList(commentList.concat(newComment));
   };
-  const like = () => {};
-  const dislike = () => {};
 
   return (
     <div className={classes.wrapper}>
@@ -124,11 +116,12 @@ function DetailVideoPage({ match, history, profileImage }) {
       ) : (
         <>
           <div className={classes.mainVideo}>
-            <video
-              controls
-              className={classes.innerVideo}
-              src={`http://localhost:5000/api/video/video/${videoDetail.filePath}`}
-            ></video>
+            <video className={classes.innerVideo} controls>
+              <source
+                src={`http://localhost:5000/api/video/video/${videoDetail.filePath}`}
+                type="video/mp4"
+              ></source>
+            </video>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span>{videoDetail.title}</span>
               <hr />
@@ -138,18 +131,34 @@ function DetailVideoPage({ match, history, profileImage }) {
               <span style={{ marginLeft: "0.5em" }}>
                 ~{dayjs(videoDetail.createdAt).from(dayjs(), true)} ago
               </span>
-              <LikeDislike video videoId={id} userId={userId} />
+              <LikeDislike
+                video
+                videoId={id}
+                userId={userId}
+                authenticated={authenticated}
+                history={history}
+              />
               <div className={classes.subscribe}>
-                <Avatar className={classes.avatar}>
-                  {videoDetail.writer.handle[0].toUpperCase()}
-                </Avatar>
-                <Subscribe history={history} userTo={videoDetail.writer._id} />
+                <Avatar
+                  style={{ cursor: "pointer" }}
+                  src={`http://localhost:5000/api/profile/image/${userImage}`}
+                />
+
+                <Subscribe
+                  loading={loading}
+                  history={history}
+                  userTo={videoDetail.writer._id}
+                  authenticated={authenticated}
+                  id={userId}
+                />
               </div>
               <Description description={videoDetail.description} />
             </div>
           </div>
           {recomVideo && !recomVideo.length ? (
-            <Typography variant="h4">No Similar Video Found</Typography>
+            <div className={classes.recomVideo}>
+              <p>No Similar Video Found</p>
+            </div>
           ) : (
             <div className={classes.recomVideo}>
               <SideBar videos={recomVideo} />
@@ -159,10 +168,12 @@ function DetailVideoPage({ match, history, profileImage }) {
             <Comments
               commentLength={commentLength}
               history={history}
-              userImage={profileImage}
               commentList={commentList}
               id={id}
               refreshFunction={updateComment}
+              authenticated={authenticated}
+              userImage={userImage}
+              user={userId}
             />
           </div>
         </>
@@ -170,4 +181,7 @@ function DetailVideoPage({ match, history, profileImage }) {
     </div>
   );
 }
-export default DetailVideoPage;
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
+export default connect(mapStateToProps, {})(DetailVideoPage);

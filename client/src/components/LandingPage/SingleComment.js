@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import Comment from "./Comment";
 function SingleComment({ refreshFunction, comment, id }) {
+  console.log('SIngle Comment')
   const [isReply, setIsReply] = useState(null);
   const {
     content,
@@ -36,4 +37,4 @@ function SingleComment({ refreshFunction, comment, id }) {
   );
 }
 
-export default SingleComment;
+export default React.memo(SingleComment);

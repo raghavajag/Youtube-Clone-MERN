@@ -6,14 +6,12 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
-import { makeStyles } from "@material-ui/core";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 function Description({ description }) {
-  const useStyles = makeStyles((theme) => ({}));
-  const classes = useStyles();
+  console.log("Description");
 
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
@@ -30,7 +28,6 @@ function Description({ description }) {
         style={{ marginTop: "1em" }}
         variant="outlined"
         size="small"
-        color="primary"
         onClick={handleClickOpen}
       >
         Description
@@ -59,4 +56,4 @@ function Description({ description }) {
   );
 }
 
-export default Description;
+export default React.memo(Description);

@@ -5,7 +5,7 @@ const Dislike = require("../models/Dislike");
 
 const auth = require("../middleware/auth");
 
-router.post("/getLikes", auth, (req, res) => {
+router.post("/getLikes",(req, res) => {
   let variable = {};
   if (req.body.videoId) {
     variable = { videoId: req.body.videoId };
@@ -19,7 +19,7 @@ router.post("/getLikes", auth, (req, res) => {
   });
 });
 
-router.post("/getDislikes", auth, (req, res) => {
+router.post("/getDislikes",  (req, res) => {
   let variable = {};
   if (req.body.videoId) {
     variable = { videoId: req.body.videoId };

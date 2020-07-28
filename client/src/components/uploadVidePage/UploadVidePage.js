@@ -10,7 +10,7 @@ import Button from "@material-ui/core/Button";
 import axios from "axios";
 import { connect } from "react-redux";
 import { useEffect } from "react";
-import { Typography } from "@material-ui/core";
+import { Typography, CircularProgress } from "@material-ui/core";
 function UploadVidePage({
   user: {
     credentials: { _id },
@@ -71,8 +71,6 @@ function UploadVidePage({
       border: "none",
       padding: "0.5em",
       "&:focus": {
-        border: `2px solid ${theme.palette.secondary.main}`,
-        borderRadius: "8px",
         outlineWidth: "0",
       },
       "&:hover": {
@@ -114,6 +112,7 @@ function UploadVidePage({
   const [thumbnail, setThumbnail] = useState("");
   const [videoName, setVideoName] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [dropped, setDropped] = useState(false);
   const Private = [
     { value: 0, label: "Private" },
     { value: 1, label: "Public" },
@@ -127,6 +126,7 @@ function UploadVidePage({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const onDrop = (files) => {
+    setDropped(true);
     let formData = new FormData();
     const config = {
       header: { "content-type": "multipart/form-data" },
@@ -155,6 +155,7 @@ function UploadVidePage({
       } else {
         alert("failed to upload file");
       }
+      setDropped(false);
     });
   };
   useEffect(() => {
@@ -210,18 +211,29 @@ function UploadVidePage({
         className={classes.form}
         id="video-form"
       >
-        <div style={{ margin: "auto" }}>
-          <Dropzone onDrop={(acceptedFiles) => onDrop(acceptedFiles)}>
-            {({ getRootProps, getInputProps }) => (
-              <section>
-                <div className={classes.videoUpload} {...getRootProps()}>
-                  <input {...getInputProps()} />
-                  <AddIcon />
-                  <p>Drag n Drop Video</p>
-                </div>
-              </section>
-            )}
-          </Dropzone>
+        <div style={{ margin: "auto", display: "flex", alignItems: "center" }}>
+          <div>
+            <Dropzone onDrop={(acceptedFiles) => onDrop(acceptedFiles)}>
+              {({ getRootProps, getInputProps }) => (
+                <section>
+                  <div className={classes.videoUpload} {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <AddIcon />
+                    {dropped ? (
+                      <p>Uploading && Creating Thumbnail</p>
+                    ) : (
+                      <p>Drag n Drop Video</p>
+                    )}
+                  </div>
+                </section>
+              )}
+            </Dropzone>
+          </div>
+          {dropped && (
+            <div style={{ marginLeft: "2em" }}>
+              <CircularProgress size={80} thickness={2} color="secondary" />
+            </div>
+          )}
         </div>
 
         <TextField
