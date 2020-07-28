@@ -50,7 +50,7 @@ function SideBarCard({ title, user, catagory, thumbnail, id }) {
         <a href={`/video/${id}`}>
           <img
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            src={`http://localhost:5000/${thumbnail}`}
+            src={`https://floating-springs-68584.herokuapp.com/${thumbnail}`}
             alt="something"
           />
         </a>

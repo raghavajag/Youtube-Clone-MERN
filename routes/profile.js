@@ -66,7 +66,8 @@ router.post("/image", auth, async (req, res) => {
   const id = req.user.id;
   const user = await User.findOne({ _id: id });
   if (
-    user.profileImage === "http://localhost:5000/api/profile/image/noimage.png"
+    user.profileImage ===
+    "https://floating-springs-68584.herokuapp.com/api/profile/image/noimage.png"
   ) {
     console.log("Image Upadted");
   } else {

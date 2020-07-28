@@ -300,7 +300,7 @@ function UploadVidePage({
                 className={classes.mainVideo}
                 width="400"
                 controls
-                src={`http://localhost:5000/api/video/video/${videoName}`}
+                src={`https://floating-springs-68584.herokuapp.com/api/video/video/${videoName}`}
               ></video>
             </div>
           )}
@@ -312,7 +312,7 @@ function UploadVidePage({
                   objectFit: "cover",
                   width: "100%",
                 }}
-                src={`http://localhost:5000/${thumbnail}`}
+                src={`https://floating-springs-68584.herokuapp.com/${thumbnail}`}
                 alt="haha"
               />
             </div>

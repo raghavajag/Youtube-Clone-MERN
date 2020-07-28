@@ -20,7 +20,8 @@ const UserSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    default: "http://localhost:5000/api/profile/image/noimage.png",
+    default:
+      "https://floating-springs-68584.herokuapp.com/api/profile/image/noimage.png",
   },
 });
 module.exports = User = mongoose.model("user", UserSchema);

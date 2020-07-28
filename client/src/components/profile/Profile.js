@@ -121,7 +121,10 @@ function Profile({
   }, []);
   console.log(formData);
   const checkImage = (image) => {
-    if (image === "http://localhost:5000/api/profile/image/noimage.png") {
+    if (
+      image ===
+      "https://floating-springs-68584.herokuapp.com/api/profile/image/noimage.png"
+    ) {
       return true;
     }
   };
@@ -161,7 +164,7 @@ function Profile({
                   src={
                     checkImage(profileImage)
                       ? profileImage
-                      : `http://localhost:5000/api/profile/image/${profileImage}`
+                      : `https://floating-springs-68584.herokuapp.com/api/profile/image/${profileImage}`
                   }
                   alt="no-img"
                 />

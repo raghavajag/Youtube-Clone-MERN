@@ -38,7 +38,7 @@ function VideoCard({
       <a href={`/video/${id}`}>
         <img
           className={classes.media}
-          src={`http://localhost:5000/${thumbnail}`}
+          src={`https://floating-springs-68584.herokuapp.com/${thumbnail}`}
           alt="something"
         />
       </a>

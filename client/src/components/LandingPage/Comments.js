@@ -60,7 +60,9 @@ function Comments({
       <br />
       <Typography component="h6">{commentLength} Comments</Typography>
       <form className={classes.form} onSubmit={(e) => onSubmit(e)}>
-        <Avatar src={`http://localhost:5000/api/profile/image/${userImage}`} />
+        <Avatar
+          src={`https://floating-springs-68584.herokuapp.com/api/profile/image/${userImage}`}
+        />
         <TextField
           name="comment"
           fullWidth

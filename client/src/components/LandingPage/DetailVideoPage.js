@@ -118,7 +118,7 @@ function DetailVideoPage({
           <div className={classes.mainVideo}>
             <video className={classes.innerVideo} controls>
               <source
-                src={`http://localhost:5000/api/video/video/${videoDetail.filePath}`}
+                src={`https://floating-springs-68584.herokuapp.com/api/video/video/${videoDetail.filePath}`}
                 type="video/mp4"
               ></source>
             </video>
@@ -141,7 +141,7 @@ function DetailVideoPage({
               <div className={classes.subscribe}>
                 <Avatar
                   style={{ cursor: "pointer" }}
-                  src={`http://localhost:5000/api/profile/image/${userImage}`}
+                  src={`https://floating-springs-68584.herokuapp.com/api/profile/image/${userImage}`}
                 />
 
                 <Subscribe
