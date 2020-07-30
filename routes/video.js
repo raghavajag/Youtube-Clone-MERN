@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const GridFsStorage = require("multer-gridfs-storage");
+const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const Grid = require("gridfs-stream");
 const path = require("path");
 const crypto = require("crypto");
@@ -12,6 +13,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const auth = require("../middleware/auth");
 const config = require("config");
 const mongoURI = config.get("mongoURI");
+ffmpeg.setFfmpegPath(ffmpegPath);
 const conn = mongoose.createConnection(
   mongoURI,
   {
