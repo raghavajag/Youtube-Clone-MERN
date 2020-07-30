@@ -80,6 +80,7 @@ router.post("/uploadfiles", auth, (req, res) => {
     }
     localFilePath = res.req.file.path;
     localFileName = res.req.file.filename;
+    console.log("file upload locallly SUCCESS");
   });
   upload(req, res, (err) => {
     console.log("uploadin video to cloud");
@@ -103,9 +104,13 @@ router.post("/thumbnail", auth, (req, res) => {
   let thumbsFilePath = "";
   let fileDuration = "";
   const filePath = req.body.filePath;
-  ffmpeg.ffprobe(filePath, function (err, metadata) {
-    fileDuration = metadata.format.duration;
-  });
+  console.log(filePath);
+  // ffmpeg.ffprobe(filePath, function (err, metadata) {
+  //   if (err) {
+  //     console.log(err);
+  //   }
+  //   fileDuration = metadata.format.duration;
+  // });
 
   ffmpeg(filePath)
     .on("filenames", function (filenames) {
@@ -119,7 +124,6 @@ router.post("/thumbnail", auth, (req, res) => {
       return res.json({
         success: true,
         thumbsFilePath: thumbsFilePath,
-        fileDuration: fileDuration,
       });
     })
     .screenshots({
