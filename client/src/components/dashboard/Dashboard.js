@@ -1,16 +1,9 @@
-import React from "react";
-import {
-  Typography,
-  Button,
-  Paper,
-  CircularProgress,
-  makeStyles,
-} from "@material-ui/core";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { CircularProgress, makeStyles } from "@material-ui/core";
 import LandingPage from "../LandingPage/LandingPage";
 import { connect } from "react-redux";
 function Dashboard({ authenticated, loading }) {
-  const useStyles = makeStyles((theme) => ({
+  const useStyles = makeStyles(() => ({
     dashboard: {
       display: "grid",
       gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
@@ -34,6 +27,7 @@ function Dashboard({ authenticated, loading }) {
     },
   }));
   const classes = useStyles();
+  
   if (loading) {
     return (
       <div
@@ -48,19 +42,13 @@ function Dashboard({ authenticated, loading }) {
       </div>
     );
   }
-  if (!loading && !authenticated) {
-    return (
+  return (
+    <>
       <div className={classes.dashboard}>
         <LandingPage />
       </div>
-    );
-  } else {
-    return (
-      <div className={classes.dashboard}>
-        <LandingPage />
-      </div>
-    );
-  }
+    </>
+  );
 }
 const mapStateToProps = (state) => ({
   authenticated: state.user.authenticated,
