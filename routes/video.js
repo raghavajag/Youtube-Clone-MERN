@@ -103,14 +103,15 @@ router.post("/thumbnail", auth, (req, res) => {
   console.log("creating thumbnail");
   let thumbsFilePath = "";
   let fileDuration = "";
-  const filePath = req.body.filePath;
+  const filePath = `/${req.body.filePath}`;
+  filePath.toString();
   console.log(filePath);
-  // ffmpeg.ffprobe(filePath, function (err, metadata) {
-  //   if (err) {
-  //     console.log(err);
-  //   }
-  //   fileDuration = metadata.format.duration;
-  // });
+  ffmpeg.ffprobe(filePath, function (err, metadata) {
+    if (err) {
+      console.log(err);
+    }
+    fileDuration = metadata.format.duration;
+  });
 
   ffmpeg(filePath)
     .on("filenames", function (filenames) {
