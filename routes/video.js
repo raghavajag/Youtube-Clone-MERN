@@ -74,6 +74,7 @@ router.post("/uploadfiles", auth, (req, res) => {
   let localFileName = "";
   let fileName = "";
   localUpload(req, res, (err) => {
+    console.log("uploading locally");
     if (err) {
       return res.json({ success: false, err, upload: "local" });
     }
@@ -81,6 +82,7 @@ router.post("/uploadfiles", auth, (req, res) => {
     localFileName = res.req.file.filename;
   });
   upload(req, res, (err) => {
+    console.log("uploadin video to cloud");
     if (err) {
       return res.json({ success: false, err, upload: "cloud" });
     }
@@ -97,6 +99,7 @@ router.post("/uploadfiles", auth, (req, res) => {
 // @desc    Create Thumbnail
 // @access  Private
 router.post("/thumbnail", auth, (req, res) => {
+  console.log("creating thumbnail");
   let thumbsFilePath = "";
   let fileDuration = "";
   const filePath = req.body.filePath;
