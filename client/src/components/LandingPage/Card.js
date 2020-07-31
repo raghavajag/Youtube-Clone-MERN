@@ -7,7 +7,6 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import { Link } from "react-router-dom";
 const useStyles = makeStyles((theme) => ({
   media: {
     width: "100%",
@@ -47,12 +46,7 @@ function VideoCard({
           <div style={{ display: "flex", flexDirection: "column" }}>
             <span>{title}</span>
             <hr />
-            <Typography
-              color="secondary"
-              style={{ textDecoration: "none" }}
-              component={Link}
-              to={`user/${writer}`}
-            >
+            <Typography color="secondary" style={{ textDecoration: "none" }}>
               {writer}
             </Typography>
           </div>

@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Avatar, useMediaQuery, CircularProgress } from "@material-ui/core";
 import LikeDislike from "./LikeDislike";
 import { connect } from "react-redux";
-
+import Button from "@material-ui/core/Button";
 // Components
 import Description from "./Description";
 import SideBar from "../RecommendVideo/SideBar";
@@ -32,7 +32,7 @@ function DetailVideoPage({
   const videoVariable = {
     videoId: id,
   };
-
+  console.log(videoDetail);
   useEffect(() => {
     axios.post("/api/video/data", videoVariable).then((res) => {
       setVideoDetail(res.data);
@@ -98,7 +98,14 @@ function DetailVideoPage({
     console.log("Update Comment Function");
     setCommentList(commentList.concat(newComment));
   };
-
+  const deleteVideo = () => {
+    axios.delete(`/api/video/${videoDetail.filePath}`).then((res) => {
+      if (res.data.success) {
+        console.log(res.data);
+        return history.push("/");
+      }
+    });
+  };
   return (
     <div className={classes.wrapper}>
       {videoDetail === null ||
@@ -138,6 +145,16 @@ function DetailVideoPage({
                 authenticated={authenticated}
                 history={history}
               />
+              {videoDetail && userId === videoDetail.writer._id ? (
+                <Button
+                  onClick={() => deleteVideo()}
+                  size="small"
+                  variant="contained"
+                  color="secondary"
+                >
+                  Delete
+                </Button>
+              ) : null}
               <div className={classes.subscribe}>
                 <Avatar
                   style={{ cursor: "pointer" }}

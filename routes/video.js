@@ -103,10 +103,12 @@ router.post("/uploadfiles", auth, (req, res) => {
       return res.json({ success: false, err, upload: "cloud" });
     }
     fileName = res.req.file.filename;
+    res.req.file.user = req.user.id;
     res.json({
       local: { localFileName, localFilePath },
       cloud: { fileName },
       success: true,
+      user: res.req.file.user,
     });
   });
 });
@@ -198,24 +200,31 @@ router.get("/", async (req, res) => {
 // @desc    Delete a Video with Video Info and thumbnail
 // @access  Private
 // TODO: Make route Private
-router.delete("/:videoname", (req, res) => {
+router.delete("/:videoname", auth, (req, res) => {
   const filename = req.params.videoname;
-  gfs.remove({ filename: filename, root: "uploads" }, (err, gridStore) => {
-    if (err) {
-      return res.status(404).json({ err: err });
+
+  Video.findOneAndRemove(
+    { $and: [{ filePath: filename }, { writer: req.user.id }] },
+    (err, file) => {
+      if (err) {
+        console.log(err);
+        return res.json(err);
+      }
+      if (!file) {
+        return res.json({ msg: "Unauthorised or file not" });
+      }
+      gfs.remove({ filename: filename, root: "uploads" }, (err, gridStore) => {
+        if (err) {
+          return res.status(404).json({ err: err });
+        }
+      });
+      if (fs.existsSync(file.thumbnail)) {
+        fs.unlinkSync(file.thumbnail);
+      }
+
+      return res.json({ success: true });
     }
-  });
-  Video.findOneAndRemove({ filePath: filename }, (err, file) => {
-    if (err) {
-      console.log(err);
-      return res.json(err);
-    }
-    if (!file) {
-      return res.json({ msg: "No FIles Found" });
-    }
-    fs.unlinkSync(file.thumbnail);
-    return res.json(file);
-  });
+  );
 });
 
 // @route  GET /files
