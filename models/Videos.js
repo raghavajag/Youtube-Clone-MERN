@@ -17,7 +17,7 @@ const VideoSchema = new mongoose.Schema(
       // 1 for public 0 for private
       type: Number,
     },
-    filePath: {
+    videoName: {
       type: String,
     },
     catagory: {
@@ -27,10 +27,7 @@ const VideoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    duration: {
-      type: String,
-    },
-    thumbnail: {
+    thumbName: {
       type: String,
     },
   },

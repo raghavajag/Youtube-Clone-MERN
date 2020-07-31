@@ -8,28 +8,10 @@ const crypto = require("crypto");
 const mongoose = require("mongoose");
 const fs = require("fs");
 const Video = require("../models/Videos");
-const ffmpeg = require("fluent-ffmpeg");
 const auth = require("../middleware/auth");
 const config = require("config");
 const mongoURI = config.get("mongoURI");
-(async () => {
-  const dir = path.join("uploads");
 
-  try {
-    await fs.promises.mkdir(dir);
-  } catch (error) {
-    if (error.code === "EEXIST") {
-      // Something already exists, but is it a file or directory?
-      const lstat = await fs.promises.lstat(dir);
-
-      if (!lstat.isDirectory()) {
-        throw error;
-      }
-    } else {
-      throw error;
-    }
-  }
-})();
 const conn = mongoose.createConnection(
   mongoURI,
   {
@@ -47,16 +29,18 @@ conn.once("open", function () {
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection("uploads");
 });
+// Init Cloud Stroage
 const storage = new GridFsStorage({
   url: mongoURI,
   file: (req, file) => {
     return new Promise((resolve, reject) => {
       crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
+        if (err) return reject(err);
+        const videoName = `video-${
+          buf.toString("hex") + path.extname(file.originalname)
+        }`;
         const fileInfo = {
-          filename: filename,
+          filename: videoName,
           bucketName: "uploads",
         };
         resolve(fileInfo);
@@ -64,124 +48,109 @@ const storage = new GridFsStorage({
     });
   },
 });
-const upload = multer({ storage }).single("file");
-const localStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
-  filename: (req, file, cb) => {
-    filename = `${Date.now()}_${file.originalname}`;
-    cb(null, filename);
-  },
-  fileFilter: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    if (ext !== ".mp4") {
-      return cb(res.status(400).end("only jpg, png, mp4 is allowed"), false);
-    }
-    cb(null, true);
+const imageStorage = new GridFsStorage({
+  url: mongoURI,
+  file: (req, file) => {
+    return new Promise((resolve, reject) => {
+      crypto.randomBytes(16, (err, buf) => {
+        if (err) return reject(err);
+        const thumbName = `thumbnail-${
+          buf.toString("hex") + path.extname(file.originalname)
+        }`;
+        const fileInfo = {
+          filename: thumbName,
+          bucketName: "uploads",
+        };
+        resolve(fileInfo);
+      });
+    });
   },
 });
-
-const localUpload = multer({ storage: localStorage }).single("file");
+const uploadVideo = multer({ storage }).single("file");
+const uploadThumb = multer({ storage: imageStorage }).single("image");
 
 // @route   POST: /uploadfiles
 // @desc    Upload Videos
 // @access  Private
-router.post("/uploadfiles", auth, (req, res) => {
-  let localFilePath = "";
-  let localFileName = "";
-  let fileName = "";
-  localUpload(req, res, (err) => {
+router.post("/video", (req, res) => {
+  uploadVideo(req, res, (err) => {
     if (err) {
-      return res.json({ success: false, err, upload: "local" });
+      return res.json({
+        success: false,
+        err,
+        upload: "video",
+      });
+    } else {
+      console.log(`Video Name ${res.req.file.filename}`);
+      return res.status(200).json({ name: res.req.file.filename });
     }
-    localFilePath = res.req.file.path;
-    localFileName = res.req.file.filename;
-  });
-  upload(req, res, (err) => {
-    if (err) {
-      return res.json({ success: false, err, upload: "cloud" });
-    }
-    fileName = res.req.file.filename;
-    res.req.file.user = req.user.id;
-    res.json({
-      local: { localFileName, localFilePath },
-      cloud: { fileName },
-      success: true,
-      user: res.req.file.user,
-    });
   });
 });
 
 // @route   POST :/thumbnail
-// @desc    Create Thumbnail
+// @desc    Upload Thumbnail
 // @access  Private
-router.post("/thumbnail", auth, (req, res) => {
-  let thumbsFilePath = "";
-  let fileDuration = "";
-  const filePath = req.body.filePath;
-  ffmpeg.ffprobe(filePath, function (err, metadata) {
-    fileDuration = metadata.format.duration;
+router.post("/thumb", (req, res) => {
+  uploadThumb(req, res, (err) => {
+    if (err) {
+      return res.json({ success: false, err, upload: "thumbnail" });
+    } else {
+      console.log(`Thumbnail Name ${res.req.file.filename}`);
+      return res.status(200).json({ name: res.req.file.filename });
+    }
   });
-
-  ffmpeg(filePath)
-    .on("filenames", function (filenames) {
-      console.log("Will generate " + filenames.join(", "));
-      thumbsFilePath = "uploads/thumbnails/" + filenames[0];
-    })
-    .on("end", function () {
-      console.log("Screenshots taken");
-      // const targetPath = path.join(__dirname, thumbsFilePath);
-      fs.unlinkSync(filePath);
-      return res.json({
-        success: true,
-        thumbsFilePath: thumbsFilePath,
-        fileDuration: fileDuration,
-      });
-    })
-    .screenshots({
-      count: 1,
-      folder: "uploads/thumbnails",
-      size: "320x240",
-      // %b input basename ( filename w/o extension )
-      filename: "thumbnail-%b.png",
-    });
 });
 
-// @route   POST: /uploadVideo
+// @route   POST: /upload
 // @desc    Upload Info with video & thumbnail details
 // @access  Private
-router.post("/uploadVideo", auth, async (req, res) => {
+router.post("/upload", auth, async (req, res) => {
   const {
     writer,
     title,
     description,
     privacy,
-    filePath,
+    videoName,
     catagory,
-    duration,
-    thumbnail,
+    thumbName,
   } = req.body;
   const video = new Video({
     writer,
     title,
     description,
     privacy,
-    filePath,
+    videoName,
     catagory,
-    duration,
-    thumbnail,
+    thumbName,
   });
-  await video.save((err, video) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({ success: false, err });
+  const videoInfo = {};
+  if (writer) videoInfo.writer = writer;
+  if (title) videoInfo.title = title;
+  if (description) videoInfo.description = description;
+  if (privacy) videoInfo.privacy = privacy;
+  if (videoName) videoInfo.videoName = videoName;
+  if (catagory) videoInfo.catagory = catagory;
+  if (thumbName) videoInfo.thumbName = thumbName;
+
+  try {
+    let video = await Video.findOne({ filePath });
+    if (video) {
+      // Update
+      video = await Video.findOneAndUpdate(
+        { thumbName },
+        { $set: videoInfo },
+        { new: true }
+      );
+      return res.json(video);
     }
-    return res.status(200).json({
-      success: true,
-      data: video,
-    });
-  });
+    // Create
+    video = new Video(videoInfo);
+    await video.save();
+    res.json({ video });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
 });
 
 // @route   /GET
@@ -227,14 +196,17 @@ router.delete("/:videoname", auth, (req, res) => {
   );
 });
 
-// @route  GET /files
-// @desc   Database Files
-router.get("/files", (req, res) => {
-  gfs.files.find().toArray((err, files) => {
-    if (!files || files.length === 0) {
-      return res.status(404).json({ err: "No Files Exists" });
+// Return an individual file only if it is an image
+router.get("/image/:filename", (req, res) => {
+  gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+    if (!file || file.length === 0)
+      return res.status(404).json({ err: "No file exists" });
+    if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({ err: "Not an image" });
     }
-    return res.json(files);
   });
 });
 
@@ -257,6 +229,16 @@ router.get("/video/:videoname", (req, res) => {
         err: "Not A Video",
       });
     }
+  });
+});
+// @route  GET /files
+// @desc   Database Files
+router.get("/files", (req, res) => {
+  gfs.files.find().toArray((err, files) => {
+    if (!files || files.length === 0) {
+      return res.status(404).json({ err: "No Files Exists" });
+    }
+    return res.json(files);
   });
 });
 

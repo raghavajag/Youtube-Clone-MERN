@@ -50,23 +50,7 @@ function UploadVidePage({
         },
       },
     },
-    videoUpload: {
-      display: "flex",
-      width: "150px",
-      height: "150px",
-      border: "1px solid gray",
-      color: "black",
-      alignItems: "center",
-      justifyContent: "center",
-      "&:focus": {
-        backgroundColor: lightGreen[100],
-      },
-      "&:hover": {
-        backgroundColor: red[50],
-        color: "#000",
-        cursor: "pointer",
-      },
-    },
+
     select: {
       border: "none",
       padding: "0.5em",
@@ -99,6 +83,10 @@ function UploadVidePage({
         background: lightBlue[50],
       },
     },
+    drop: {
+      display: "flex",
+      marginBottom: "1em",
+    },
   }));
   const classes = useStyles();
   const [formData, setFormData] = useState({
@@ -108,11 +96,11 @@ function UploadVidePage({
   const { title, description } = formData;
   const [privacy, setPrivacy] = useState(0);
   const [catagories, setCatagories] = useState("Web Developement");
-  const [duration, setDuration] = useState("");
-  const [thumbnail, setThumbnail] = useState("");
   const [videoName, setVideoName] = useState(null);
-  const [loaded, setLoaded] = useState(false);
+  const [thumbName, setThumbName] = useState(null);
   const [dropped, setDropped] = useState(false);
+  const [droppedImage, setDroppedImage] = useState(false);
+
   const Private = [
     { value: 0, label: "Private" },
     { value: 1, label: "Public" },
@@ -125,68 +113,58 @@ function UploadVidePage({
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  const onDrop = (files) => {
+  const onDropVideo = (files) => {
+    console.log(files);
+    if (files[0].type !== "video/mp4") {
+      return alert("Please select a mp4 format video");
+    }
     setDropped(true);
     let formData = new FormData();
+    console.log("Its Video");
     const config = {
       header: { "content-type": "multipart/form-data" },
     };
     formData.append("file", files[0]);
-    axios.post("/api/video/uploadfiles", formData, config).then((res) => {
-      console.log(res);
-      if (res.data.success) {
-        setVideoName(res.data.cloud.fileName);
-        let variable = {
-          filePath: res.data.local.localFilePath,
-          fileName: res.data.local.localFileName,
-        };
-
-        // Generate thumbnail with this local filepath
-        axios.post("/api/video/thumbnail", variable).then((res) => {
-          if (res.data.success) {
-            setDuration(res.data.fileDuration);
-            setThumbnail(res.data.thumbsFilePath);
-            console.log(res.data.thumbsFilePath);
-            setLoaded(true);
-          } else {
-            alert("FAILED TO UPLOAD THUMBNAIL");
-          }
-        });
-      } else {
-        alert("failed to upload file");
-      }
+    axios.post("api/video/video", formData, config).then((res) => {
+      setVideoName(res.data.name);
       setDropped(false);
     });
   };
-  useEffect(() => {
-    let mounted = true;
-    if (mounted && videoName !== null) {
-      setLoaded(true);
+  const onDropImage = (files) => {
+    if (files[0].type !== "image/jpeg") {
+      return alert("Please select a png or jpeg file");
     }
-  }, [videoName]);
+    setDroppedImage(true);
+    console.log("Its a Image");
+    let formData = new FormData();
+    formData.append("image", files[0]);
+    axios.post("api/video/thumb", formData).then((res) => {
+      setThumbName(res.data.name);
+      setDroppedImage(false);
+    });
+  };
+  useEffect(() => {
+    console.log(videoName);
+    console.log(thumbName);
+  }, [videoName, thumbName]);
+
   const onSubmit = (e) => {
     e.preventDefault();
-    if (loaded) {
-      console.log(formData);
-      console.log(catagories);
-      console.log(privacy);
-      console.log(videoName);
-      console.log(thumbnail);
-    } else {
-      return alert("Please Select a video");
+    if (!videoName || !thumbName) {
+      return alert("Please Select Video or Thumbnail");
     }
-    const variable = {
-      writer: _id,
-      title: title,
-      description: description,
-      privacy: privacy,
-      filePath: videoName,
-      catagory: catagories,
-      duration: duration,
-      thumbnail: thumbnail,
+    console.log(formData);
+    console.log(catagories);
+    console.log(privacy);
+    const videoData = {
+      ...formData,
+      privacy,
+      catagories,
+      videoName,
+      thumbName,
     };
-    console.log(variable);
-    axios.post("/api/video/uploadVideo", variable).then((res) => {
+    console.log(videoData);
+    axios.post("/api/video/upload", videoData).then((res) => {
       if (res.data.success) {
         alert("video Uploaded Successfully");
         history.push("/");
@@ -211,29 +189,41 @@ function UploadVidePage({
         className={classes.form}
         id="video-form"
       >
-        <div style={{ margin: "auto", display: "flex", alignItems: "center" }}>
-          <div>
-            <Dropzone onDrop={(acceptedFiles) => onDrop(acceptedFiles)}>
-              {({ getRootProps, getInputProps }) => (
-                <section>
-                  <div className={classes.videoUpload} {...getRootProps()}>
-                    <input {...getInputProps()} />
-                    <AddIcon />
-                    {dropped ? (
-                      <p>Uploading && Creating Thumbnail</p>
-                    ) : (
-                      <p>Drag n Drop Video</p>
-                    )}
-                  </div>
-                </section>
-              )}
-            </Dropzone>
-          </div>
-          {dropped && (
-            <div style={{ marginLeft: "2em" }}>
-              <CircularProgress size={80} thickness={2} color="secondary" />
-            </div>
-          )}
+        <div className={classes.drop}>
+          <Dropzone onDrop={(acceptedFiles) => onDropVideo(acceptedFiles)}>
+            {({ getRootProps, getInputProps }) => (
+              <section>
+                <div className={classes.videoUpload} {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  <Button
+                    style={{ marginRight: "1em", width: "100%" }}
+                    size="small"
+                    color="primary"
+                    variant="contained"
+                  >
+                    Video
+                  </Button>
+                </div>
+              </section>
+            )}
+          </Dropzone>
+          <Dropzone onDrop={(acceptedFiles) => onDropImage(acceptedFiles)}>
+            {({ getRootProps, getInputProps }) => (
+              <section>
+                <div className={classes.videoUpload} {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  <Button
+                    style={{ marginLeft: "1em" }}
+                    size="small"
+                    color="primary"
+                    variant="contained"
+                  >
+                    Thumbnail
+                  </Button>
+                </div>
+              </section>
+            )}
+          </Dropzone>
         </div>
 
         <TextField
@@ -304,7 +294,7 @@ function UploadVidePage({
               ></video>
             </div>
           )}
-          {thumbnail && thumbnail !== "" && (
+          {thumbName && thumbName !== "" && (
             <div className={classes.thumbnail}>
               <Typography variant="h5">Thumbnail ~</Typography>
               <img
@@ -312,7 +302,7 @@ function UploadVidePage({
                   objectFit: "cover",
                   width: "100%",
                 }}
-                src={`https://floating-springs-68584.herokuapp.com/${thumbnail}`}
+                src={`https://floating-springs-68584.herokuapp.com/api/video/image/${thumbName}`}
                 alt="haha"
               />
             </div>
