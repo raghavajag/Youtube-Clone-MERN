@@ -12,7 +12,6 @@ const ffmpeg = require("fluent-ffmpeg");
 const auth = require("../middleware/auth");
 const config = require("config");
 const mongoURI = config.get("mongoURI");
-const fs = require("fs");
 (async () => {
   const dir = path.join("uploads");
 
