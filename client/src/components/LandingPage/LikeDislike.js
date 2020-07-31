@@ -4,6 +4,7 @@ import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import axios from "axios";
 function LikeDislike(props) {
+  console.log(props.authenticated);
   const [Likes, setLikes] = useState(0);
   const [Dislikes, setDislikes] = useState(0);
   const [LikeAction, setLikeAction] = useState(null);
@@ -46,10 +47,9 @@ function LikeDislike(props) {
   }, [props.userId]);
 
   const onLike = () => {
-    if (!props.authenticated) {
+    if (props.authenticated && !props.authenticated) {
       return props.history.push("/login");
-    }
-    if (LikeAction === null) {
+    } else if (LikeAction === null) {
       axios.post("/api/like/upLike", variable).then((response) => {
         if (response.data.success) {
           setLikes(Likes + 1);
@@ -75,7 +75,7 @@ function LikeDislike(props) {
     }
   };
   const onDislike = () => {
-    if (!props.authenticated) {
+    if (props.authenticated && !props.authenticated) {
       return props.history.push("/login");
     }
     if (DislikeAction !== null) {

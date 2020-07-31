@@ -14,19 +14,20 @@ function SideBarCard({ title, user, catagory, thumbName, id }) {
   const useStyles = makeStyles(() => ({
     cardContent: {
       display: "flex",
-      width: "50%",
+      width: "100%",
     },
     main: {
       width: matches ? "auto" : "100%",
       display: "flex",
       marginBottom: "2em",
-      height: matches ? "200px" : "auto",
+      height: "auto",
+      alignItems: "center",
       justifyContent: matches ? "space-between" : "none",
       margin: matches && matchMedia ? "2em" : "none",
       boxShadow: "none",
     },
     media: {
-      width: matches ? "auto" : "60%",
+      width: "100%",
     },
   }));
   const classes = useStyles();
@@ -49,7 +50,7 @@ function SideBarCard({ title, user, catagory, thumbName, id }) {
       <div className={classes.media}>
         <a href={`/video/${id}`}>
           <img
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
             src={`https://floating-springs-68584.herokuapp.com/api/video/image/${thumbName}`}
             alt="something"
           />

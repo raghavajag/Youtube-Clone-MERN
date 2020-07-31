@@ -146,7 +146,7 @@ function DetailVideoPage({
                 history={history}
               />
               {videoDetail && userId === videoDetail.writer._id ? (
-                <>
+                <div>
                   <Button
                     onClick={() => deleteVideo()}
                     size="small"
@@ -156,14 +156,17 @@ function DetailVideoPage({
                     Delete
                   </Button>
                   <Button
-                    onClick={() => history.push("/upload")}
+                    style={{ marginLeft: "6px" }}
+                    onClick={() =>
+                      history.push(`/update/${videoDetail.videoName}`)
+                    }
                     size="small"
                     variant="contained"
                     color="primary"
                   >
                     Update
                   </Button>
-                </>
+                </div>
               ) : null}
               <div className={classes.subscribe}>
                 <Avatar

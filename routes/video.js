@@ -10,6 +10,7 @@ const fs = require("fs");
 const Video = require("../models/Videos");
 const auth = require("../middleware/auth");
 const config = require("config");
+const Videos = require("../models/Videos");
 const mongoURI = config.get("mongoURI");
 
 const conn = mongoose.createConnection(
@@ -168,6 +169,14 @@ router.get("/", async (req, res) => {
   return res.status(200).json(video);
 });
 
+router.get("/info/:videoName", auth, async (req, res) => {
+  const video = await Video.findOne({ videoName });
+  if (!video) {
+    return res.json({ msg: "No Video Found" });
+  }
+  console.log(video);
+  return res.json(video);
+});
 // @route   Delete /:videoname
 // @desc    Delete a Video with Video Info and thumbnail
 // @access  Private

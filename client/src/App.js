@@ -26,6 +26,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import UploadVidePage from "./components/uploadVidePage/UploadVidePage";
 import DetailVideoPage from "./components/LandingPage/DetailVideoPage";
 import Profile from "./components/profile/Profile";
+import UpdateVideo from "./components/LandingPage/UpdateVideo";
 const token = localStorage.getItem("x-auth-token");
 if (token) {
   const decodedToken = jwtDecode(token);
@@ -59,6 +60,8 @@ function App() {
                   component={DetailVideoPage}
                 />
                 <PrivateRoute exact path="/upload" component={UploadVidePage} />
+                <PrivateRoute exact path="/update/:videoName" component={UpdateVideo} />
+
                 <PrivateRoute exact path="/profile" component={Profile} />
                 <div style={{ margin: "1em" }}>
                   <Route exact path="/" component={Dashboard} />
