@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import AddIcon from "@material-ui/icons/Add";
 import { makeStyles } from "@material-ui/core/styles";
-import { lightBlue, lightGreen, red } from "@material-ui/core/colors";
+import { lightBlue, blue } from "@material-ui/core/colors";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
@@ -10,7 +10,9 @@ import Button from "@material-ui/core/Button";
 import axios from "axios";
 import { connect } from "react-redux";
 import { useEffect } from "react";
-import { Typography, CircularProgress } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
+import { LinearProgress } from "@material-ui/core";
+
 function UploadVidePage({
   user: {
     credentials: { _id },
@@ -33,10 +35,10 @@ function UploadVidePage({
       flexDirection: "column",
       padding: "1em",
       "& label.Mui-focused": {
-        color: red[500],
+        color: blue[500],
       },
       "& .MuiInput-underline:after": {
-        borderBottomColor: theme.palette.secondary.main,
+        borderBottomColor: theme.palette.primary.main,
       },
       "& .MuiOutlinedInput-root": {
         "& fieldset": {
@@ -46,7 +48,7 @@ function UploadVidePage({
           borderColor: "lightgray",
         },
         "&.Mui-focused fieldset": {
-          borderColor: theme.palette.secondary.main,
+          borderColor: theme.palette.primary.main,
         },
       },
     },
@@ -60,13 +62,7 @@ function UploadVidePage({
       "&:hover": {
         backgroundColor: "rgb(244, 244, 244)",
       },
-    },
-    thumbnail: {
-      margin: "auto",
-    },
-    video: {
-      margin: mediaMatch ? null : "auto",
-      width: mediaMatch ? "50%" : null,
+      marginTop: !matches ? "1em" : "none",
     },
     mainVideo: {
       width: "100%",
@@ -80,12 +76,23 @@ function UploadVidePage({
       width: "100%",
       marginTop: "1em",
       "&:hover": {
-        background: lightBlue[50],
+        background: lightBlue,
       },
     },
     drop: {
       display: "flex",
-      marginBottom: "1em",
+      margin: "1em auto",
+      flexDirection: !matches ? "column" : "row",
+    },
+    progress: {
+      position: "absolute",
+    },
+    thumbnail: {
+      margin: "auto",
+    },
+    video: {
+      margin: mediaMatch ? null : "auto",
+      width: mediaMatch ? "50%" : null,
     },
   }));
   const classes = useStyles();
@@ -95,7 +102,7 @@ function UploadVidePage({
   });
   const { title, description } = formData;
   const [privacy, setPrivacy] = useState(0);
-  const [catagories, setCatagories] = useState("Web Developement");
+  const [catagory, setCatagories] = useState("Web Developement");
   const [videoName, setVideoName] = useState(null);
   const [thumbName, setThumbName] = useState(null);
   const [dropped, setDropped] = useState(false);
@@ -143,10 +150,10 @@ function UploadVidePage({
       setDroppedImage(false);
     });
   };
-  useEffect(() => {
-    console.log(videoName);
-    console.log(thumbName);
-  }, [videoName, thumbName]);
+  // useEffect(() => {
+  //   console.log(videoName);
+  //   console.log(thumbName);
+  // }, [videoName, thumbName]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -154,14 +161,15 @@ function UploadVidePage({
       return alert("Please Select Video or Thumbnail");
     }
     console.log(formData);
-    console.log(catagories);
+    console.log(catagory);
     console.log(privacy);
     const videoData = {
       ...formData,
       privacy,
-      catagories,
+      catagory,
       videoName,
       thumbName,
+      writer: _id,
     };
     console.log(videoData);
     axios.post("/api/video/upload", videoData).then((res) => {
@@ -189,47 +197,11 @@ function UploadVidePage({
         className={classes.form}
         id="video-form"
       >
-        <div className={classes.drop}>
-          <Dropzone onDrop={(acceptedFiles) => onDropVideo(acceptedFiles)}>
-            {({ getRootProps, getInputProps }) => (
-              <section>
-                <div className={classes.videoUpload} {...getRootProps()}>
-                  <input {...getInputProps()} />
-                  <Button
-                    style={{ marginRight: "1em", width: "100%" }}
-                    size="small"
-                    color="primary"
-                    variant="contained"
-                  >
-                    Video
-                  </Button>
-                </div>
-              </section>
-            )}
-          </Dropzone>
-          <Dropzone onDrop={(acceptedFiles) => onDropImage(acceptedFiles)}>
-            {({ getRootProps, getInputProps }) => (
-              <section>
-                <div className={classes.videoUpload} {...getRootProps()}>
-                  <input {...getInputProps()} />
-                  <Button
-                    style={{ marginLeft: "1em" }}
-                    size="small"
-                    color="primary"
-                    variant="contained"
-                  >
-                    Thumbnail
-                  </Button>
-                </div>
-              </section>
-            )}
-          </Dropzone>
-        </div>
-
         <TextField
           required
           onChange={(e) => onChange(e)}
           name="title"
+          value={title}
           className={classes.textField}
           id="outlined-basic"
           label="Title"
@@ -239,6 +211,7 @@ function UploadVidePage({
           required
           onChange={(e) => onChange(e)}
           name="description"
+          value={description}
           multiline
           rows="4"
           className={classes.textField}
@@ -246,37 +219,97 @@ function UploadVidePage({
           label="Description"
           variant="outlined"
         />
-        <div style={{ marginTop: " 1em", display: "flex" }}>
-          <select
-            className={classes.select}
-            name=""
-            id=""
-            onChange={(e) => handleChangePrivacy(e)}
-          >
-            {Private.map((item, index) => (
-              <option key={index} value={item.label}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-          <select
-            style={{ marginLeft: "1em" }}
-            className={classes.select}
-            name=""
-            id=""
-            onChange={(e) => handleChangeCatagory(e)}
-          >
-            {Catagory.map((item, index) => (
-              <option key={index} value={item.label}>
-                {item.label}
-              </option>
-            ))}
-          </select>
+        <div className={classes.drop}>
+          <div style={{ display: "flex" }}>
+            <Dropzone onDrop={(acceptedFiles) => onDropVideo(acceptedFiles)}>
+              {({ getRootProps, getInputProps }) => (
+                <section>
+                  <div className={classes.videoUpload} {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <Button
+                      style={{ marginRight: "1em", width: "100%" }}
+                      size="small"
+                      color="primary"
+                      variant="contained"
+                    >
+                      Video
+                    </Button>
+                    {dropped && (
+                      <LinearProgress
+                        color="secondary"
+                        size={30}
+                        style={{
+                          width: "77px",
+                          marginTop: "6px",
+                        }}
+                        className={classes.progress}
+                      />
+                    )}
+                  </div>
+                </section>
+              )}
+            </Dropzone>
+            <Dropzone onDrop={(acceptedFiles) => onDropImage(acceptedFiles)}>
+              {({ getRootProps, getInputProps }) => (
+                <section>
+                  <div className={classes.videoUpload} {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <Button
+                      style={{ marginLeft: "1em" }}
+                      size="small"
+                      color="primary"
+                      variant="contained"
+                    >
+                      Thumbnail
+                    </Button>
+                    {droppedImage && (
+                      <LinearProgress
+                        size={30}
+                        color="secondary"
+                        style={{
+                          width: "77px",
+                          marginTop: "6px",
+                          marginLeft: "1em",
+                        }}
+                        className={classes.progress}
+                      />
+                    )}
+                  </div>
+                </section>
+              )}
+            </Dropzone>
+          </div>
+          <div style={{ display: "flex" }}>
+            <select
+              style={{ marginLeft: matches ? "1em" : "none" }}
+              className={classes.select}
+              onChange={(e) => handleChangePrivacy(e)}
+            >
+              {Private.map((item, index) => (
+                <option key={index} value={item.label}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+            <select
+              style={{ marginLeft: !matches ? "1em" : "none" }}
+              className={classes.select}
+              onChange={(e) => handleChangeCatagory(e)}
+            >
+              {Catagory.map((item, index) => (
+                <option key={index} value={item.label}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+        {/* <div style={{ display: "flex" }}></div> */}
         <Button
           className={classes.button}
-          color="secondary"
+          color="primary"
           type="submit"
+          variant="contained"
           fullWidth
         >
           Submit

@@ -133,11 +133,11 @@ router.post("/upload", auth, async (req, res) => {
   if (thumbName) videoInfo.thumbName = thumbName;
 
   try {
-    let video = await Video.findOne({ filePath });
+    let video = await Video.findOne({ videoName });
     if (video) {
       // Update
       video = await Video.findOneAndUpdate(
-        { thumbName },
+        { videoName },
         { $set: videoInfo },
         { new: true }
       );
