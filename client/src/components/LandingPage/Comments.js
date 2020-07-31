@@ -22,7 +22,7 @@ function Comments({
   userImage,
   authenticated,
 }) {
-  console.log('Comments')
+  console.log("Comments");
   const [comment, setComment] = useState("");
   const useStyles = makeStyles(() => ({
     form: { display: "flex", flexDirection: "row" },
@@ -90,6 +90,7 @@ function Comments({
                   comment={comment}
                   id={id}
                   refreshFunction={refreshFunction}
+                  history={history}
                 />
                 <ReplyComment
                   commentId={comment._id}

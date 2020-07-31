@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 import Comment from "./Comment";
-function SingleComment({ refreshFunction, comment, id }) {
-  console.log('SIngle Comment')
+function SingleComment({ refreshFunction, comment, id, history }) {
+  console.log("SIngle Comment");
   const [isReply, setIsReply] = useState(null);
   const {
     content,
@@ -31,6 +31,7 @@ function SingleComment({ refreshFunction, comment, id }) {
           commentId={commentId}
           refreshFunction={refreshFunction}
           isReply={isReply}
+          history={history}
         />
       )}
     </div>

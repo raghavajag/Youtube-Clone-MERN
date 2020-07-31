@@ -22,9 +22,12 @@ function Comment({
   commentId,
   refreshFunction,
   isReply,
+  history,
 }) {
   console.log("Child SIngle Comment");
   const userId = useSelector((state) => state.user.credentials._id);
+  const authenticated = useSelector((state) => state.user.authenticated);
+
   const [reply, setReply] = useState("");
   const [action, setAction] = useState(false);
   dayjs.extend(relativeTime);
@@ -36,6 +39,9 @@ function Comment({
     e.preventDefault();
     if (reply.trim() === "") {
       return alert("Must be something");
+    }
+    if (!authenticated) {
+      return history.push("/login");
     }
     setReply("");
     const variable = {
