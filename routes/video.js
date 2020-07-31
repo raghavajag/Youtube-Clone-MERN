@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const GridFsStorage = require("multer-gridfs-storage");
-const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const Grid = require("gridfs-stream");
 const path = require("path");
 const crypto = require("crypto");
@@ -13,7 +12,25 @@ const ffmpeg = require("fluent-ffmpeg");
 const auth = require("../middleware/auth");
 const config = require("config");
 const mongoURI = config.get("mongoURI");
-ffmpeg.setFfmpegPath(ffmpegPath);
+const fs = require("fs");
+(async () => {
+  const dir = path.join("uploads");
+
+  try {
+    await fs.promises.mkdir(dir);
+  } catch (error) {
+    if (error.code === "EEXIST") {
+      // Something already exists, but is it a file or directory?
+      const lstat = await fs.promises.lstat(dir);
+
+      if (!lstat.isDirectory()) {
+        throw error;
+      }
+    } else {
+      throw error;
+    }
+  }
+})();
 const conn = mongoose.createConnection(
   mongoURI,
   {
@@ -76,16 +93,13 @@ router.post("/uploadfiles", auth, (req, res) => {
   let localFileName = "";
   let fileName = "";
   localUpload(req, res, (err) => {
-    console.log("uploading locally");
     if (err) {
       return res.json({ success: false, err, upload: "local" });
     }
     localFilePath = res.req.file.path;
     localFileName = res.req.file.filename;
-    console.log("file upload locallly SUCCESS");
   });
   upload(req, res, (err) => {
-    console.log("uploadin video to cloud");
     if (err) {
       return res.json({ success: false, err, upload: "cloud" });
     }
@@ -102,16 +116,10 @@ router.post("/uploadfiles", auth, (req, res) => {
 // @desc    Create Thumbnail
 // @access  Private
 router.post("/thumbnail", auth, (req, res) => {
-  console.log("creating thumbnail");
   let thumbsFilePath = "";
   let fileDuration = "";
-  const filePath = `/${req.body.filePath}`;
-  filePath.toString();
-  console.log(filePath);
+  const filePath = req.body.filePath;
   ffmpeg.ffprobe(filePath, function (err, metadata) {
-    if (err) {
-      console.log(err);
-    }
     fileDuration = metadata.format.duration;
   });
 
@@ -127,6 +135,7 @@ router.post("/thumbnail", auth, (req, res) => {
       return res.json({
         success: true,
         thumbsFilePath: thumbsFilePath,
+        fileDuration: fileDuration,
       });
     })
     .screenshots({
