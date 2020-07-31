@@ -174,9 +174,11 @@ function UploadVidePage({
     console.log(videoData);
     axios.post("/api/video/upload", videoData).then((res) => {
       if (res.data.success) {
+        console.log(res.data);
         alert("video Uploaded Successfully");
         history.push("/");
       } else {
+        console.log(res.data);
         alert("Failed to upload video");
       }
     });

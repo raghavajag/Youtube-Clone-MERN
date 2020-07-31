@@ -123,6 +123,7 @@ router.post("/upload", auth, async (req, res) => {
     catagory,
     thumbName,
   });
+  console.log(video);
   const videoInfo = {};
   if (writer) videoInfo.writer = writer;
   if (title) videoInfo.title = title;
@@ -131,22 +132,24 @@ router.post("/upload", auth, async (req, res) => {
   if (videoName) videoInfo.videoName = videoName;
   if (catagory) videoInfo.catagory = catagory;
   if (thumbName) videoInfo.thumbName = thumbName;
-
+  console.log(`Video Info ${videoInfo}`);
   try {
     let video = await Video.findOne({ videoName });
+    console.log(video);
     if (video) {
       // Update
+      console.log("Updating Video");
       video = await Video.findOneAndUpdate(
         { videoName },
         { $set: videoInfo },
         { new: true }
       );
-      return res.json(video);
+      return res.json({ success: true, video });
     }
     // Create
     video = new Video(videoInfo);
     await video.save();
-    res.json({ video });
+    res.json({ success: true, video });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
