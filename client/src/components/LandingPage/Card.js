@@ -24,8 +24,7 @@ function VideoCard({
   views,
   createdAt,
   catagory,
-  duration,
-  thumbnail,
+  thumbName,
   id,
 }) {
   const classes = useStyles();
@@ -37,7 +36,7 @@ function VideoCard({
       <a href={`/video/${id}`}>
         <img
           className={classes.media}
-          src={`https://floating-springs-68584.herokuapp.com/${thumbnail}`}
+          src={`https://floating-springs-68584.herokuapp.com/api/video/image/${thumbName}`}
           alt="something"
         />
       </a>
@@ -62,11 +61,11 @@ function VideoCard({
               ~{date} ago
             </Typography>
           </div>
-          <div>
+          {/* <div>
             <Typography variant="caption" color="textSecondary">
               Length: {parseFloat(duration).toFixed(1)} sec
             </Typography>
-          </div>
+          </div> */}
           <span style={{ marginTop: "0.5em" }}>{catagory}</span>
         </CardContent>
       </div>

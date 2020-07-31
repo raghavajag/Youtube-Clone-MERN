@@ -99,7 +99,7 @@ function DetailVideoPage({
     setCommentList(commentList.concat(newComment));
   };
   const deleteVideo = () => {
-    axios.delete(`/api/video/${videoDetail.filePath}`).then((res) => {
+    axios.delete(`/api/video/${videoDetail.videoName}`).then((res) => {
       if (res.data.success) {
         console.log(res.data);
         return history.push("/");
@@ -125,7 +125,7 @@ function DetailVideoPage({
           <div className={classes.mainVideo}>
             <video className={classes.innerVideo} controls>
               <source
-                src={`https://floating-springs-68584.herokuapp.com/api/video/video/${videoDetail.filePath}`}
+                src={`https://floating-springs-68584.herokuapp.com/api/video/video/${videoDetail.videoName}`}
                 type="video/mp4"
               ></source>
             </video>
@@ -146,14 +146,24 @@ function DetailVideoPage({
                 history={history}
               />
               {videoDetail && userId === videoDetail.writer._id ? (
-                <Button
-                  onClick={() => deleteVideo()}
-                  size="small"
-                  variant="contained"
-                  color="secondary"
-                >
-                  Delete
-                </Button>
+                <>
+                  <Button
+                    onClick={() => deleteVideo()}
+                    size="small"
+                    variant="contained"
+                    color="secondary"
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    onClick={() => history.push("/upload")}
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                  >
+                    Update
+                  </Button>
+                </>
               ) : null}
               <div className={classes.subscribe}>
                 <Avatar

@@ -70,6 +70,7 @@ function UploadVidePage({
     mediaContainer: {
       display: "flex",
       flexDirection: mediaMatch ? "row" : "column",
+      width: "100%",
     },
     button: {
       fontSize: "1.1em",
@@ -89,10 +90,13 @@ function UploadVidePage({
     },
     thumbnail: {
       margin: "auto",
+      width: "100%",
+      padding: matches ? "1em" : "none",
     },
     video: {
       margin: mediaMatch ? null : "auto",
-      width: mediaMatch ? "50%" : null,
+      width: "100%",
+      padding: matches ? "1em" : "none",
     },
   }));
   const classes = useStyles();

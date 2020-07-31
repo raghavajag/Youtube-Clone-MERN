@@ -30,9 +30,8 @@ function LandingPage() {
           createdAt={video.createdAt}
           catagory={video.catagory}
           description={video.description}
-          duration={video.duration}
-          videoPath={video.filePath}
-          thumbnail={video.thumbnail}
+          videoName={video.videoName}
+          thumbName={video.thumbName}
           id={video._id}
         />
       </Grow>

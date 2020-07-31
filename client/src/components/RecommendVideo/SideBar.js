@@ -9,7 +9,7 @@ function SideBar({ videos }) {
       title={video.title}
       user={video.writer.handle}
       catagory={video.catagory}
-      thumbnail={video.thumbnail}
+      thumbName={video.thumbName}
       id={video._id}
     />
   ));

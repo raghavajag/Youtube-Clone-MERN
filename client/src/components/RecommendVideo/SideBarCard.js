@@ -7,11 +7,11 @@ import {
   useMediaQuery,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-function SideBarCard({ title, user, catagory, thumbnail, id }) {
+function SideBarCard({ title, user, catagory, thumbName, id }) {
   const matches = useMediaQuery("(max-width:1300px)");
   const matchMedia = useMediaQuery("(min-width:750px)");
 
-  const useStyles = makeStyles((theme) => ({
+  const useStyles = makeStyles(() => ({
     cardContent: {
       display: "flex",
       width: "50%",
@@ -50,7 +50,7 @@ function SideBarCard({ title, user, catagory, thumbnail, id }) {
         <a href={`/video/${id}`}>
           <img
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            src={`https://floating-springs-68584.herokuapp.com/${thumbnail}`}
+            src={`https://floating-springs-68584.herokuapp.com/api/video/image/${thumbName}`}
             alt="something"
           />
         </a>
