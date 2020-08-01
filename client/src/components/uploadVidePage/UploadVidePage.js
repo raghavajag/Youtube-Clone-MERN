@@ -142,7 +142,7 @@ function UploadVidePage({
     });
   };
   const onDropImage = (files) => {
-    if (files[0].type !== "image/jpeg") {
+    if (files[0].type !== "image/jpeg" || files[0].type !== "image/png") {
       return alert("Please select a png or jpeg file");
     }
     setDroppedImage(true);
@@ -154,11 +154,6 @@ function UploadVidePage({
       setDroppedImage(false);
     });
   };
-  // useEffect(() => {
-  //   console.log(videoName);
-  //   console.log(thumbName);
-  // }, [videoName, thumbName]);
-
   const onSubmit = (e) => {
     e.preventDefault();
     if (!videoName || !thumbName) {
