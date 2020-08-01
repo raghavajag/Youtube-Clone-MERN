@@ -114,6 +114,7 @@ router.post("/upload", auth, async (req, res) => {
     videoName,
     catagory,
     thumbName,
+    oldThumb,
   } = req.body;
   const video = new Video({
     writer,
@@ -135,19 +136,22 @@ router.post("/upload", auth, async (req, res) => {
   if (thumbName) videoInfo.thumbName = thumbName;
   console.log(`Video Info ${videoInfo}`);
   try {
-    let video = await Video.findOne({ videoName });
-    console.log(video);
+    thumbName.toString();
+    oldThumb.toString();
+
+    let video = await Video.findOne({ thumbName: oldThumb });
     if (video) {
       // Update
       console.log("Updating Video");
       video = await Video.findOneAndUpdate(
-        { videoName },
+        { thumbName: oldThumb },
         { $set: videoInfo },
         { new: true }
       );
       return res.json({ success: true, video });
     }
     // Create
+    console.log("creating video");
     video = new Video(videoInfo);
     await video.save();
     res.json({ success: true, video });
@@ -169,23 +173,53 @@ router.get("/", async (req, res) => {
   return res.status(200).json(video);
 });
 
-router.get("/info/:videoName", auth, async (req, res) => {
-  const video = await Video.findOne({ videoName });
+router.get("/data/:videoName", auth, async (req, res) => {
+  const videoName = req.params.videoName;
+  videoName.toString();
+  const video = await Video.findOne({
+    $and: [{ writer: req.user.id }, { videoName: videoName }],
+  });
   if (!video) {
     return res.json({ msg: "No Video Found" });
   }
-  console.log(video);
   return res.json(video);
 });
+router.get("/info", async (req, res) => {
+  const video = await Video.find();
+  return res.json(video);
+});
+// @route Delete /thumb
+// @desc Delete a thumbnail
+router.delete("/thumb/:thumbName", auth, (req, res) => {
+  const thumbName = req.params.thumbName;
+  Video.findOneAndDelete(
+    { $and: [{ thumbName }, { writer: req.user.id }] },
+    (err, file) => {
+      if (err) {
+        console.log(err);
+        return res.status(400).json(err);
+      }
+      if (!file) {
+        return res.json({ msg: "Unauthorised or file not" });
+      }
+      gfs.remove({ filename: thumbName, root: "uploads" }, (err, gridStore) => {
+        if (err) {
+          return res.status(404).json({ err: err });
+        }
+      });
+      return res.json({ success: true });
+    }
+  );
+});
+
 // @route   Delete /:videoname
 // @desc    Delete a Video with Video Info and thumbnail
 // @access  Private
-// TODO: Make route Private
 router.delete("/:videoname", auth, (req, res) => {
   const filename = req.params.videoname;
 
   Video.findOneAndRemove(
-    { $and: [{ filePath: filename }, { writer: req.user.id }] },
+    { $and: [{ videoName: filename }, { writer: req.user.id }] },
     (err, file) => {
       if (err) {
         console.log(err);
@@ -199,10 +233,6 @@ router.delete("/:videoname", auth, (req, res) => {
           return res.status(404).json({ err: err });
         }
       });
-      if (fs.existsSync(file.thumbnail)) {
-        fs.unlinkSync(file.thumbnail);
-      }
-
       return res.json({ success: true });
     }
   );
@@ -277,7 +307,7 @@ router.post("/catagory", async (req, res) => {
 });
 // @route <DELETE> /files/:id
 // @desc  Delete File
-router.delete("/del/all", (req, res) => {
+router.delete("/del/all", async (req, res) => {
   gfs.files.find().toArray((err, files) => {
     if (!files || files.length === 0) {
       return res.status(404).json({ err: "No Files Exists" });
@@ -293,5 +323,9 @@ router.delete("/del/all", (req, res) => {
       });
     }
   });
+  await Video.remove({}, () => {
+    return res.json({ msg: "Video And Details Deleted" });
+  });
 });
+
 module.exports = router;
