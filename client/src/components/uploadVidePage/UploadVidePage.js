@@ -142,7 +142,8 @@ function UploadVidePage({
     });
   };
   const onDropImage = (files) => {
-    if (files[0].type !== "image/jpeg" || files[0].type !== "image/png") {
+    console.log(files)
+    if (files[0].type !== "image/jpeg" && files[0].type !== "image/png") {
       return alert("Please select a png or jpeg file");
     }
     setDroppedImage(true);
