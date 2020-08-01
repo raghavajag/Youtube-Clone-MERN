@@ -168,8 +168,10 @@ function UpdateVideo({ match, history }) {
         alert("Video Updated Successfully");
         axios.delete(`/api/video/thumb/${oldThumb}`).then((res) => {
           console.log(res.data);
+          if (res.data.success) {
+            return history.push("/");
+          }
         });
-        return history.push("/");
       } else {
         console.log(res.data);
         alert("Failed to upload video");

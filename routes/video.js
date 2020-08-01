@@ -192,24 +192,12 @@ router.get("/info", async (req, res) => {
 // @desc Delete a thumbnail
 router.delete("/thumb/:thumbName", auth, (req, res) => {
   const thumbName = req.params.thumbName;
-  Video.findOneAndDelete(
-    { $and: [{ thumbName }, { writer: req.user.id }] },
-    (err, file) => {
-      if (err) {
-        console.log(err);
-        return res.status(400).json(err);
-      }
-      if (!file) {
-        return res.json({ msg: "Unauthorised or file not" });
-      }
-      gfs.remove({ filename: thumbName, root: "uploads" }, (err, gridStore) => {
-        if (err) {
-          return res.status(404).json({ err: err });
-        }
-      });
-      return res.json({ success: true });
+  gfs.remove({ filename: thumbName, root: "uploads" }, (err, gridStore) => {
+    if (err) {
+      return res.status(404).json({ err: err });
     }
-  );
+  });
+  return res.json({ success: true });
 });
 
 // @route   Delete /:videoname
