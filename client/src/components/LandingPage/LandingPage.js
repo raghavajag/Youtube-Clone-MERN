@@ -8,7 +8,7 @@ function LandingPage() {
   const [videos, setVideo] = useState(null);
   useEffect(() => {
     axios.get("api/video").then((res) => {
-      if (res.data.length) {
+      if (res.data) {
         setVideo(res.data);
       }
     });
