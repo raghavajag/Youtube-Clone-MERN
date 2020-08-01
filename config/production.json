@@ -1,4 +1,0 @@
-{
-  "mongoURI": "mongodb+srv://mernYoutube:tUGP7jRFYPqLwSi7@cluster0.o3ave.gcp.mongodb.net/mern?retryWrites=true&w=majority",
-  "jwtSecret": "secret"
-}
