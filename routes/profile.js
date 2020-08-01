@@ -66,7 +66,7 @@ router.post("/image", auth, async (req, res) => {
   const user = await User.findOne({ _id: id });
   if (
     user.profileImage ===
-    "https://floating-springs-68584.herokuapp.com/api/profile/image/noimage.png"
+    "https://floating-springs-68584.herokuapp.com/api/profile/image/profile.png"
   ) {
     console.log("Image Upadted");
   } else {
@@ -94,7 +94,6 @@ router.post("/image", auth, async (req, res) => {
     return res.json({ profileImage: profile.profileImage });
   });
 });
-
 // @route   Get /image/:profileImage
 // @desc    Display Profile Image
 // @access  Public

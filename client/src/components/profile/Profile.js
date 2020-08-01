@@ -30,6 +30,7 @@ function Profile({
   },
 }) {
   const matches = useMediaQuery("(min-width:750px)");
+  console.log(profileImage)
   const useStyles = makeStyles((theme) => ({
     main: {
       marginTop: "100px",
@@ -123,7 +124,7 @@ function Profile({
   const checkImage = (image) => {
     if (
       image ===
-      "https://floating-springs-68584.herokuapp.com/api/profile/image/noimage.png"
+      "https://floating-springs-68584.herokuapp.com/api/profile/image/profile.png"
     ) {
       return true;
     }

@@ -6,11 +6,9 @@ const Grid = require("gridfs-stream");
 const path = require("path");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
-const fs = require("fs");
 const Video = require("../models/Videos");
 const auth = require("../middleware/auth");
 const config = require("config");
-const Videos = require("../models/Videos");
 const mongoURI = config.get("mongoURI");
 
 const conn = mongoose.createConnection(
@@ -58,6 +56,7 @@ const imageStorage = new GridFsStorage({
         const thumbName = `thumbnail-${
           buf.toString("hex") + path.extname(file.originalname)
         }`;
+
         const fileInfo = {
           filename: thumbName,
           bucketName: "uploads",
