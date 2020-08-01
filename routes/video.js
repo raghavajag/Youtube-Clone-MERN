@@ -136,9 +136,12 @@ router.post("/upload", auth, async (req, res) => {
   if (thumbName) videoInfo.thumbName = thumbName;
   console.log(`Video Info ${videoInfo}`);
   try {
-    thumbName.toString();
-    oldThumb.toString();
-
+    if (thumbName) {
+      thumbName.toString();
+    }
+    if (oldThumb) {
+      oldThumb.toString();
+    }
     let video = await Video.findOne({ thumbName: oldThumb });
     if (video) {
       // Update
