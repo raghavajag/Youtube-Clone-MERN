@@ -1,5 +1,5 @@
-# Youtube-Clone-MERN
-
+# Youtube-Clone in MERN
+** In this project i tried to clone youtube, with video and thumbnail upload functionality, users can create account and like video and subscribe to other users**
 Deployed App -> [Youtube Clone](https://floating-springs-68584.herokuapp.com/)
 
 **Add Your Mongodb URI in ```/config/default.json```**
